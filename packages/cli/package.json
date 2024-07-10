@@ -1,5 +1,5 @@
 {
-  "name": "cli",
+  "name": "convertfast-ui",
   "version": "1.0.0",
   "type": "module",
   "exports": "./dist/index.js",
@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "devDependencies": {
     "tsup": "^8.1.0"
