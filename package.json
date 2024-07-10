@@ -1,0 +1,9 @@
+{
+  "name": "convertfast-ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Observed Observer",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["packages/*"]
+}
