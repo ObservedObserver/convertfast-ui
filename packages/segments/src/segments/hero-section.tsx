@@ -3,17 +3,29 @@ import { FC } from "react";
 
 export const HeroSection: FC = () => {
   return (
-    <div className="p-16 mx-auto">
-      <div className="max-w-3xl">
-        <h1 className="text-6xl my-8 font-semibold">
-          Bootstrap your landing page with convertfast-ui
-        </h1>
-        <p className="text-2xl my-6">
-          Build landing page with ease and convert your customers fast.
-        </p>
-        <div className="flex gap-2 mt-2">
-          <Button>Start now</Button>
-          <Button variant="outline">npm install convertfast-ui</Button>
+    <div className="bg-gradient-to-r from-gray-50 to-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+            Bootstrap your landing page with ConvertFast UI
+          </h1>
+          <p className="text-xl sm:text-2xl text-gray-600 mb-8">
+            Build stunning landing pages with ease and convert your customers
+            faster than ever.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button size="lg" className="w-full sm:w-auto">
+              Start now
+            </Button>
+            <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <code className="bg-gray-100 p-1 rounded">
+                npm install convertfast-ui
+              </code>
+            </Button>
+          </div>
+          <p className="mt-4 text-sm text-gray-500">
+            Free and open-source. No credit card required.
+          </p>
         </div>
       </div>
     </div>

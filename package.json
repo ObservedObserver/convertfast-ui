@@ -5,5 +5,8 @@
   "author": "Observed Observer",
   "license": "MIT",
   "private": true,
-  "workspaces": ["packages/*"]
+  "workspaces": ["packages/*"],
+  "prettier": {
+    "tabWidth": 2
+  }
 }
