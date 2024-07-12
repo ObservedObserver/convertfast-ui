@@ -1,3 +1,8 @@
 {
+  "nextjs": {
     "router": "app"
+  },
+  "components": {
+    "path": "components.json"
+  }
 }

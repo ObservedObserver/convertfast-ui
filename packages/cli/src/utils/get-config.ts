@@ -18,5 +18,5 @@ export async function resolveRouterPath() {
     }
   }
   const config = JSON.parse((await fs.readFile(path.resolve(rootDir, "landing-pages.json"))).toString());
-  return path.resolve(rootDir, config.router);
+  return path.resolve(rootDir, config.nextjs?.router);
 }
