@@ -9,6 +9,10 @@
     "build": "tsup",
     "exec": "node ./dist/index.js"
   },
+  "prettier": {
+    "tabWidth": 2,
+    "printWidth": 120
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
