@@ -1,6 +1,8 @@
 # convertfast-ui
 
 ![convertfast-ui npm](https://img.shields.io/npm/v/convertfast-ui)
+![GitHub License](https://img.shields.io/github/license/ObservedObserver/convertfast-ui)
+
 
  
 Bootstrap a customizale beautiful landing page.
