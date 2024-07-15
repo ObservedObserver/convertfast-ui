@@ -45,4 +45,20 @@ export const DEFAULT_SEGMENTS: ISegment[] = [
       },
     ],
   },
+  {
+    name: "PricingSection",
+    file: "pricing",
+    components: [
+      {
+        name: "Button",
+        file: "button",
+        source: "shadcn",
+      },
+      {
+        name: "Card",
+        file: "card",
+        source: "shadcn",
+      },
+    ],
+  },
 ];
