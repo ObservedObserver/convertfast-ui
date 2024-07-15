@@ -41,7 +41,7 @@ const faqs: FAQItem[] = [
 
 export const FAQ: FC = () => {
   return (
-    <section className="">
+    <section className="bg-gradient-to-t from-zinc-50 to-white dark:from-zinc-950 to-black">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl text-center mb-8">
@@ -52,7 +52,7 @@ export const FAQ: FC = () => {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="rounded-lg shadow-sm border border-gray-200"
+                className="rounded-lg shadow-sm border"
               >
                 <AccordionTrigger className="px-4 py-4">
                   <span className="text-left font-medium">{faq.question}</span>
