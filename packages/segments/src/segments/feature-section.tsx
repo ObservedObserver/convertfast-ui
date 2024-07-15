@@ -16,8 +16,8 @@ const Feature: FC<FeatureProps> = ({ title, description, imageUrl, isImageLeft }
       </div>
     )}
     <div className={`order-2 ${isImageLeft ? 'md:order-2' : 'md:order-1'}`}>
-      <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{title}</h2>
-      <p className="mt-6 text-lg leading-8 text-gray-600">{description}</p>
+      <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">{title}</h2>
+      <p className="mt-6 text-lg leading-8 secondary-foreground">{description}</p>
       <div className="mt-4">
         <Button variant="link">Learn more</Button>
       </div>
@@ -62,10 +62,10 @@ export const FeatureSection: FC = () => {
     <div className="py-16 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
       <div className="mx-auto max-w-2xl text-center mb-16">
         <h2 className="text-base font-semibold leading-7 text-primary">ConvertFast</h2>
-        <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-primary">
           Everything you need to build landing pages
         </p>
-        <p className="mt-6 text-lg leading-8 text-gray-600">
+        <p className="mt-6 text-lg leading-8 text-secondary-foreground">
           ConvertFast is a powerful landing page builder for developers, offering code templates and components inspired by shadcn. Create beautiful, functional landing pages quickly and efficiently.
         </p>
       </div>

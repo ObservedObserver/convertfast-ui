@@ -41,10 +41,10 @@ const faqs: FAQItem[] = [
 
 export const FAQ: FC = () => {
   return (
-    <section className="bg-gray-50">
+    <section className="">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center mb-8">
+          <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl text-center mb-8">
             Frequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="space-y-4">
@@ -52,9 +52,9 @@ export const FAQ: FC = () => {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-white rounded-lg shadow-sm border border-gray-200"
+                className="rounded-lg shadow-sm border border-gray-200"
               >
-                <AccordionTrigger className="px-4 py-4 hover:bg-gray-50 transition-colors">
+                <AccordionTrigger className="px-4 py-4">
                   <span className="text-left font-medium">{faq.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 pt-2 text-gray-600">

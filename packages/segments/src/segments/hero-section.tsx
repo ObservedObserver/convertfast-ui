@@ -3,13 +3,13 @@ import { FC } from "react";
 
 export const HeroSection: FC = () => {
   return (
-    <div className="bg-gradient-to-r from-gray-50 to-gray-100">
+    <div className="bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
         <div className="max-w-3xl">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-primary mb-6">
             Bootstrap your landing page with ConvertFast UI
           </h1>
-          <p className="text-xl sm:text-2xl text-gray-600 mb-8">
+          <p className="text-xl sm:text-2xl text-secondary-foreground mb-8">
             Build stunning landing pages with ease and convert your customers
             faster than ever.
           </p>
@@ -18,7 +18,7 @@ export const HeroSection: FC = () => {
               Start now
             </Button>
             <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              <code className="bg-gray-100 p-1 rounded">
+              <code className="p-1 rounded">
                 npm install convertfast-ui
               </code>
             </Button>

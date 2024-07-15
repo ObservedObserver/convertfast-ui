@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export const CTA: FC = () => {
   return (
-    <section className="bg-gradient-to-r from-slate-950 to-zinc-950 text-white">
+    <section className="">
       <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
