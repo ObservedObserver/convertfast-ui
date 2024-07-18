@@ -5,9 +5,8 @@ import { fileURLToPath } from 'url';
 import { resolveRouterPath } from '../utils/get-config.ts';
 import { DEFAULT_SEGMENTS } from "../utils/segments.ts";
 import { getTemplatePageCode } from "../utils/templates.ts";
-import { installSegmentDeps } from "@/utils/install-deps.ts";
+import { installSegmentDeps } from "../utils/install-deps.ts";
 
-// Define the path to your project root
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -22,25 +21,25 @@ page
 
 page.command("create")
   .description("Create a new landing page")
-  .argument("<page>", "the page name to create")
-  .action(async (page: string) => {
+  .argument("<page>", "the page name to create (can be a relative path)")
+  .action(async (pagePath: string) => {
     try {
-      console.log(`Creating new landing page: ${page}`);
+      console.log(`Creating new landing page: ${pagePath}`);
 
       const pagesRootDir = await resolveRouterPath();
-      const pageDir = path.join(pagesRootDir, page);
+      const fullPagePath = path.join(pagesRootDir, pagePath);
 
-      console.log(`Creating directory: ${pageDir}`);
-      await fs.mkdir(pageDir, { recursive: true });
+      console.log(`Creating directory: ${fullPagePath}`);
+      await fs.mkdir(fullPagePath, { recursive: true });
 
       const code = getTemplatePageCode(DEFAULT_SEGMENTS);
-      const pageFilePath = path.join(pageDir, 'page.tsx');
+      const pageFilePath = path.join(fullPagePath, 'page.tsx');
       console.log(`Writing page file: ${pageFilePath}`);
       await fs.writeFile(pageFilePath, code);
 
       for (let seg of DEFAULT_SEGMENTS) {
         const sourceFile = path.join(SEGMENT_SOURCE_DIR, "segments", `${seg.file}.tsx`);
-        const destFile = path.join(pageDir, `${seg.file}.tsx`);
+        const destFile = path.join(fullPagePath, `${seg.file}.tsx`);
         console.log(`Copying segment file: ${destFile}`);
         await fs.copyFile(sourceFile, destFile);
 
@@ -48,7 +47,7 @@ page.command("create")
         await installSegmentDeps(seg.file);
       }
 
-      console.log(`Landing page '${page}' has been successfully created.`);
+      console.log(`Landing page '${pagePath}' has been successfully created.`);
     } catch (error) {
       if (error instanceof Error) {
         console.error(`Error creating landing page: ${error.message}`);
@@ -61,18 +60,18 @@ page.command("create")
 
 page.command("add")
   .description("Add a segment to an existing landing page")
-  .argument("<page>", "the page name to add the segment to")
+  .argument("<page>", "the page name to add the segment to (can be a relative path)")
   .argument("<segment>", "the segment to add (e.g., cta, hero-section)")
-  .action(async (page: string, segmentFile: string) => {
+  .action(async (pagePath: string, segmentFile: string) => {
     try {
-      console.log(`Adding segment '${segmentFile}' to page '${page}'`);
+      console.log(`Adding segment '${segmentFile}' to page '${pagePath}'`);
 
       const pagesRootDir = await resolveRouterPath();
-      const pageDir = path.join(pagesRootDir, page);
+      const fullPagePath = path.join(pagesRootDir, pagePath);
 
       // Check if the page exists
-      if (!await fs.stat(pageDir).catch(() => false)) {
-        throw new Error(`Page '${page}' does not exist.`);
+      if (!await fs.stat(fullPagePath).catch(() => false)) {
+        throw new Error(`Page '${pagePath}' does not exist.`);
       }
 
       // Find the segment in DEFAULT_SEGMENTS
@@ -83,12 +82,12 @@ page.command("add")
 
       // Copy segment file
       const sourceFile = path.join(SEGMENT_SOURCE_DIR, "segments", `${segment.file}.tsx`);
-      const destFile = path.join(pageDir, `${segment.file}.tsx`);
+      const destFile = path.join(fullPagePath, `${segment.file}.tsx`);
       console.log(`Copying segment file: ${destFile}`);
       await fs.copyFile(sourceFile, destFile);
 
       // Update page.tsx to include the new segment
-      const pageFilePath = path.join(pageDir, 'page.tsx');
+      const pageFilePath = path.join(fullPagePath, 'page.tsx');
       let pageContent = await fs.readFile(pageFilePath, 'utf-8');
       
       // Add import statement if not already present
@@ -111,7 +110,7 @@ page.command("add")
       // Install dependencies for the added segment
       await installSegmentDeps(segment.file);
 
-      console.log(`Segment '${segment.name}' has been successfully added to page '${page}'.`);
+      console.log(`Segment '${segment.name}' has been successfully added to page '${pagePath}'.`);
     } catch (error) {
       if (error instanceof Error) {
         console.error(`Error adding segment: ${error.message}`);
