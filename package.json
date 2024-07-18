@@ -1,11 +1,15 @@
 {
-  "name": "convertfast-ui",
+  "name": "convertfast-ui-devspace",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Observed Observer",
   "license": "MIT",
   "private": true,
   "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "yarn workspace convertfast-ui build",
+    "postbuild": "cp -r packages/segments/src packages/cli/templates"
+  },
   "prettier": {
     "tabWidth": 2,
     "printWidth": 120

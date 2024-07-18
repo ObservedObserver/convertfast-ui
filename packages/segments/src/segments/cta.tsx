@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { Button } from "@/components/ui/button";
-import { BGShapeCircle } from "@/components/bg-shape-circle";
+// import { BGShapeCircle } from "@/components/bg-shape-circle";
 
 export const CTA: FC = () => {
   return (
     <section className="bg-gradient-to-t from-zinc-50 to-white dark:from-zinc-950 to-black overflow-hidden relative">
-      <BGShapeCircle />
+      {/* <BGShapeCircle /> */}
       <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">

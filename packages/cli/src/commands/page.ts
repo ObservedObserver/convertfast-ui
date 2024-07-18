@@ -5,13 +5,14 @@ import { fileURLToPath } from 'url';
 import { resolveRouterPath } from '../utils/get-config.ts';
 import { DEFAULT_SEGMENTS } from "../utils/segments.ts";
 import { getTemplatePageCode } from "../utils/templates.ts";
+import { installSegmentDeps } from "@/utils/install-deps.ts";
 
 // Define the path to your project root
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 
-const SEGMENT_SOURCE_DIR = path.join(PROJECT_ROOT, "../segments/src");
+const SEGMENT_SOURCE_DIR = path.join(PROJECT_ROOT, "./templates/src");
 
 export const page = new Command();
 
@@ -42,6 +43,9 @@ page.command("create")
         const destFile = path.join(pageDir, `${seg.file}.tsx`);
         console.log(`Copying segment file: ${destFile}`);
         await fs.copyFile(sourceFile, destFile);
+
+        // Install dependencies for each segment
+        await installSegmentDeps(seg.file);
       }
 
       console.log(`Landing page '${page}' has been successfully created.`);
@@ -103,6 +107,9 @@ page.command("add")
       }
 
       await fs.writeFile(pageFilePath, pageContent);
+
+      // Install dependencies for the added segment
+      await installSegmentDeps(segment.file);
 
       console.log(`Segment '${segment.name}' has been successfully added to page '${page}'.`);
     } catch (error) {
