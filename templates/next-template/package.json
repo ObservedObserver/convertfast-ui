@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node ../cli/dist/index.js"
+    "test": "node ../../packages/cli/dist/index.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",
