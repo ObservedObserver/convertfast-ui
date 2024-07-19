@@ -1,4 +1,3 @@
-import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -86,8 +85,7 @@ export function PricingSection() {
                   <p className="mt-10 text-sm font-semibold leading-6 text-primary">{plan.description}</p>
                   <ul role="list" className="mt-6 space-y-3 text-sm leading-6 text-muted-foreground">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex gap-x-3">
-                        <CheckCircle className="h-6 w-5 flex-none text-muted-foreground" />
+                      <li key={feature}>
                         {feature}
                       </li>
                     ))}

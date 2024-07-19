@@ -35,25 +35,25 @@ export const FeatureSection: FC = () => {
     {
       title: "Rapid Landing Page Development",
       description: "Build stunning landing pages in minutes with our intuitive drag-and-drop interface and pre-designed components.",
-      imageUrl: "/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
       isImageLeft: true,
     },
     {
       title: "Customizable Templates",
       description: "Choose from a wide range of professionally designed templates and easily customize them to match your brand.",
-      imageUrl: "/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
       isImageLeft: false,
     },
     {
       title: "Code Export and Integration",
       description: "Export clean, optimized code that seamlessly integrates with your existing projects, saving valuable development time.",
-      imageUrl: "/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
       isImageLeft: true,
     },
     {
       title: "Responsive Design",
       description: "Create mobile-friendly landing pages that look great on all devices, ensuring a consistent user experience.",
-      imageUrl: "/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
       isImageLeft: false,
     },
   ];
