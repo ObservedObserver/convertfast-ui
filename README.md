@@ -2,6 +2,7 @@
 
 <img width="1896" alt="convertfast-demo" src="https://github.com/user-attachments/assets/cbf9a421-6c61-486d-9af6-1096f874cb79">
 
+<img width="1801" alt="convertfast-ui-light-demo" src="https://github.com/user-attachments/assets/18e0356b-9377-4c9b-81c5-22e6fcc62d71">
 
 ![convertfast-ui npm](https://img.shields.io/npm/v/convertfast-ui)
 ![GitHub License](https://img.shields.io/github/license/ObservedObserver/convertfast-ui)
