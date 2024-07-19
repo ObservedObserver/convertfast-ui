@@ -5,7 +5,7 @@
   "author": "Observed Observer",
   "license": "MIT",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": ["packages/*", "templates/*"],
   "scripts": {
     "build": "yarn workspace convertfast-ui build",
     "copy-templates": "cp -r packages/segments/src packages/cli/templates",
