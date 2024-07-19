@@ -3,10 +3,13 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from 'url';
 import prompts from 'prompts';
+import { execa } from "execa";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
+
+const SEGMENT_ASSETS_DIR = path.join(PROJECT_ROOT, "./assets/_convertfast");
 
 async function fileExists(filePath: string): Promise<boolean> {
   try {
@@ -101,6 +104,9 @@ init
     // Write the configuration to landing-pages.json
     const configPath = path.join(process.cwd(), 'landing-pages.json');
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
+
+    // copy static assets
+    await execa('cp', ['-r', SEGMENT_ASSETS_DIR, path.join(process.cwd(), 'public/_convertfast')]);
 
     console.log("landing-pages.json has been created successfully!");
   });

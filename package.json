@@ -8,7 +8,9 @@
   "workspaces": ["packages/*"],
   "scripts": {
     "build": "yarn workspace convertfast-ui build",
-    "postbuild": "cp -r packages/segments/src packages/cli/templates"
+    "copy-templates": "cp -r packages/segments/src packages/cli/templates",
+    "copy-assets": "cp -r packages/segments/public packages/cli/assets",
+    "postbuild": "yarn copy-templates && yarn copy-assets"
   },
   "prettier": {
     "tabWidth": 2,

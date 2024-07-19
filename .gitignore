@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 packages/cli/templates
+packages/cli/assets
+packages/segments/public/*.png
