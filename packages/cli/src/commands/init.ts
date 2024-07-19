@@ -106,7 +106,7 @@ init
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
 
     // copy static assets
-    await execa('cp', ['-r', SEGMENT_ASSETS_DIR, path.join(process.cwd(), 'public/_convertfast')]);
+    await execa('cp', ['-r', SEGMENT_ASSETS_DIR, path.join(process.cwd(), 'public')]);
 
     console.log("landing-pages.json has been created successfully!");
   });
