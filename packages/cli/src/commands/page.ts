@@ -6,6 +6,7 @@ import { resolveRouterPath } from '../utils/get-config.ts';
 import { DEFAULT_SEGMENTS } from "../utils/segments.ts";
 import { getTemplatePageCode } from "../utils/templates.ts";
 import { installSegmentDeps } from "../utils/install-deps.ts";
+import { mergeComponents } from "@/utils/merge-components.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,15 +38,24 @@ page.command("create")
       console.log(`Writing page file: ${pageFilePath}`);
       await fs.writeFile(pageFilePath, code);
 
+      const sourceCodes: string[] = []
+
       for (let seg of DEFAULT_SEGMENTS) {
         const sourceFile = path.join(SEGMENT_SOURCE_DIR, "segments", `${seg.file}.tsx`);
         const destFile = path.join(fullPagePath, `${seg.file}.tsx`);
+        const sourceCode = await fs.readFile(sourceFile)
+        sourceCodes.push(sourceCode.toString());
         console.log(`Copying segment file: ${destFile}`);
         await fs.copyFile(sourceFile, destFile);
 
         // Install dependencies for each segment
         await installSegmentDeps(seg.file);
       }
+
+      const mergedCode = mergeComponents(sourceCodes);
+
+      const mergedFilePath = path.join(fullPagePath, 'merged.tsx');
+      fs.writeFile(mergedFilePath, mergedCode);
 
       console.log(`Landing page '${pagePath}' has been successfully created.`);
     } catch (error) {
