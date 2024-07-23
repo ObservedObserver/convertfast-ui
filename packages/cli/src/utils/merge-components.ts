@@ -6,17 +6,10 @@ import * as t from '@babel/types';
 export function mergeComponents(components: string[]): string {
   const asts = components.map((component, index) => {
     try {
-      const ast = parse(component, {
+      return parse(component, {
         sourceType: 'module',
         plugins: ['jsx', 'typescript'],
       });
-      
-      if (!ast || !Array.isArray(ast.program.body)) {
-        console.error(`Invalid AST structure for component ${index + 1}:`, JSON.stringify(ast, null, 2));
-        throw new Error(`Invalid AST structure for component ${index + 1}`);
-      }
-      
-      return ast;
     } catch (error: any) {
       console.error(`Error parsing component ${index + 1}:`, error);
       console.error('Problematic code:', component);
@@ -24,39 +17,98 @@ export function mergeComponents(components: string[]): string {
     }
   });
 
-  const combinedAst: t.File = {
-    type: "File",
-    program: t.program([
-      t.importDeclaration(
-        [t.importDefaultSpecifier(t.identifier('React'))],
-        t.stringLiteral('react')
-      )
-    ]),
-    comments: null,
-    loc: null,
-  };
-
+  const imports: Map<string, t.ImportDeclaration> = new Map();
+  const constants: t.VariableDeclaration[] = [];
   const jsxElements: t.JSXElement[] = [];
 
   asts.forEach((ast, index) => {
     traverse.default(ast, {
-      ReturnStatement(path) {
-        if (t.isJSXElement(path.node.argument)) {
-          jsxElements.push(
-            t.jsxElement(
-              t.jsxOpeningElement(t.jsxIdentifier('div'), [
-                t.jsxAttribute(t.jsxIdentifier('className'), t.stringLiteral(`component-${index + 1}`))
-              ], false),
-              t.jsxClosingElement(t.jsxIdentifier('div')),
-              [path.node.argument],
-              false
-            )
-          );
+      ImportDeclaration(path) {
+        const importSource = path.node.source.value;
+        if (!imports.has(importSource)) {
+          imports.set(importSource, t.cloneNode(path.node));
+        } else {
+          const existingImport = imports.get(importSource)!;
+          path.node.specifiers.forEach(specifier => {
+            if (!existingImport.specifiers.some(s => 
+              s.type === specifier.type && s.local.name === specifier.local.name
+            )) {
+              existingImport.specifiers.push(t.cloneNode(specifier));
+            }
+          });
+        }
+      },
+      VariableDeclaration(path) {
+        if (path.node.kind === 'const') {
+          path.node.declarations.forEach(declaration => {
+            if (t.isVariableDeclarator(declaration) &&
+                t.isArrowFunctionExpression(declaration.init) &&
+                t.isIdentifier(declaration.id) &&
+                declaration.id.name.match(/^[A-Z]/)) {
+              // This is a React functional component
+              extractJSXFromComponent(path, declaration.init, index);
+            } else {
+              constants.push(t.cloneNode(path.node));
+            }
+          });
+        }
+      },
+      FunctionDeclaration(path) {
+        if (path.node.id && path.node.id.name.match(/^[A-Z]/)) {
+          extractJSXFromComponent(path, path.node, index);
         }
       }
     });
   });
 
+  function extractJSXFromComponent(path: traverse.NodePath, node: t.FunctionDeclaration | t.ArrowFunctionExpression, index: number) {
+    let returnStatement: t.ReturnStatement | null = null;
+    
+    path.traverse({
+      ReturnStatement(returnPath) {
+        if (t.isJSXElement(returnPath.node.argument)) {
+          returnStatement = t.cloneNode(returnPath.node);
+        }
+      }
+    });
+
+    if (returnStatement && t.isJSXElement(returnStatement.argument)) {
+      jsxElements.push(
+        t.jsxElement(
+          t.jsxOpeningElement(t.jsxIdentifier('div'), [
+            t.jsxAttribute(t.jsxIdentifier('className'), t.stringLiteral(`component-${index + 1}`))
+          ], false),
+          t.jsxClosingElement(t.jsxIdentifier('div')),
+          [returnStatement.argument],
+          false
+        )
+      );
+    }
+  }
+
+  const programBody: t.Statement[] = [];
+
+  // Add React import if not present
+  if (!imports.has('react')) {
+    programBody.push(
+      t.importDeclaration(
+        [t.importDefaultSpecifier(t.identifier('React'))],
+        t.stringLiteral('react')
+      )
+    );
+  }
+
+  // Add other imports
+  imports.forEach(importNode => {
+    programBody.push(importNode);
+  });
+
+  // Add constants
+  constants.forEach(constant => {
+    programBody.push(constant);
+  });
+
+  // Create merged component
   const mergedComponent = t.functionDeclaration(
     t.identifier('MergedComponent'),
     [],
@@ -76,10 +128,12 @@ export function mergeComponents(components: string[]): string {
     t.tsTypeReference(t.identifier('JSX.Element'))
   );
 
-  combinedAst.program.body.push(mergedComponent);
-  combinedAst.program.body.push(
+  programBody.push(mergedComponent);
+  programBody.push(
     t.exportDefaultDeclaration(t.identifier('MergedComponent'))
   );
+
+  const combinedAst = t.file(t.program(programBody));
 
   try {
     const { code } = generate.default(combinedAst, {
@@ -88,7 +142,7 @@ export function mergeComponents(components: string[]): string {
       jsescOption: {
         minimal: true,
       },
-    });
+    }, components.join('\n'));
     return code;
   } catch (error) {
     console.error('Error generating code:', error);
