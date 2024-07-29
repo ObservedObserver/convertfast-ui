@@ -59,9 +59,10 @@ init
     console.log("Initializing landing-pages.json configuration...");
 
     const config: any = {};
+    const __dirname = process.cwd();
 
     // Detect NextJS configuration
-    const nextJsConfig = await detectNextJsConfig(process.cwd());
+    const nextJsConfig = await detectNextJsConfig(__dirname);
     if (nextJsConfig) {
       config.nextjs = nextJsConfig;
     } else {
@@ -88,7 +89,7 @@ init
     }
 
     // Find components.json
-    const componentsJsonPath = await findComponentsJsonPath(process.cwd());
+    const componentsJsonPath = await findComponentsJsonPath(__dirname);
     if (componentsJsonPath) {
       config.components = { path: componentsJsonPath };
     } else {
@@ -102,11 +103,20 @@ init
     }
 
     // Write the configuration to landing-pages.json
-    const configPath = path.join(process.cwd(), 'landing-pages.json');
+    let configPath = path.join(__dirname, 'landing-pages.json');
+    const tsConfigPath = path.resolve(__dirname, 'tsconfig.json');
+    const res = await fs.readFile(tsConfigPath);
+    const tsConfig = JSON.parse(res.toString());
+    console.log(tsConfig.compilerOptions.paths);
+    for (let [_, ps] of Object.entries<string[]>(tsConfig.compilerOptions.paths)) {
+      if (ps.includes('./src/*')) {
+        configPath = path.resolve(__dirname, './src/', 'landing-pages.json');
+      }
+    }
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
 
     // copy static assets
-    await execa('cp', ['-r', SEGMENT_ASSETS_DIR, path.join(process.cwd(), 'public')]);
+    await execa('cp', ['-r', SEGMENT_ASSETS_DIR, path.join(__dirname, 'public')]);
 
     console.log("landing-pages.json has been created successfully!");
   });
