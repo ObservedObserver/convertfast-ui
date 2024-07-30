@@ -3,22 +3,42 @@ import fs from "fs/promises";
 
 export async function resolveRouterPath() {
   const __dirname = process.cwd();
-  const configPath = path.resolve(__dirname, "tsconfig.json");
-  const res = await fs.readFile(configPath);
-  const tsConfig = JSON.parse(res.toString());
-  let rootDir = "./";
-  // if (paths.includes("./*")) {
-  //     rootDir = './'
-  // }
+  let srcDir = "./";
+  let config;
 
-  console.log(tsConfig.compilerOptions.paths);
-  for (let [k, ps] of Object.entries<string[]>(tsConfig.compilerOptions.paths)) {
-    if (ps.includes("./src/*")) {
-      rootDir = "./src";
+  try {
+    // Read and parse tsconfig.json
+    const configPath = path.resolve(__dirname, "tsconfig.json");
+    const tsConfigContent = await fs.readFile(configPath, 'utf-8');
+    const tsConfig = JSON.parse(tsConfigContent);
+
+    // Check for src directory in paths
+    const paths = tsConfig.compilerOptions?.paths;
+    if (paths) {
+      for (let [_, ps] of Object.entries<string[]>(paths)) {
+        if (ps.some(p => p.startsWith('./src/'))) {
+          srcDir = "./src";
+          break;
+        }
+      }
     }
+
+    // Read and parse landing-pages.json
+    const landingPagesPath = path.resolve(__dirname, "landing-pages.json");
+    const landingPagesContent = await fs.readFile(landingPagesPath, 'utf-8');
+    config = JSON.parse(landingPagesContent);
+
+  } catch (error) {
+    console.error("Error reading configuration files:", error);
+    throw error;
   }
-  const config = JSON.parse((await fs.readFile(path.resolve(rootDir, "landing-pages.json"))).toString());
-  return path.resolve(rootDir, config.nextjs?.router);
+
+  // Resolve the router path
+  if (!config?.nextjs?.router) {
+    throw new Error("Next.js router configuration not found in landing-pages.json");
+  }
+
+  return path.resolve(__dirname, srcDir, config.nextjs.router);
 }
 
 interface TsConfig {
