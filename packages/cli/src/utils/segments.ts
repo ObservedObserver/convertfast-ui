@@ -61,4 +61,8 @@ export const DEFAULT_SEGMENTS: ISegment[] = [
       },
     ],
   },
+  {
+    name: "CompanyLogos",
+    file: "company-logos",
+  },
 ];

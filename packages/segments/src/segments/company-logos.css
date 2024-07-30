@@ -1,0 +1,65 @@
+@keyframes layer-transform {
+    0% {
+        opacity: 0;
+        filter: blur(var(--blur-radius));
+    }
+    4.16% {
+        opacity: 1;
+        filter: blur(0);
+    }
+    29.17% {
+        opacity: 1;
+        filter: blur(0);
+    }
+    33% {
+        opacity: 0;
+        filter: blur(var(--blur-radius));
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .layer-0,
+    .layer-1,
+    .layer-2 {
+        --blur-radius: 8px;
+        opacity: 0;
+        filter: blur(var(--blur-radius));
+        animation-name: layer-transform;
+        animation-duration: 12s;
+        animation-iteration-count: infinite;
+    }
+
+    .layer-0 {
+        animation-delay: 0s;
+    }
+
+    .layer-1 {
+        animation-delay: 4s;
+    }
+
+    .layer-2 {
+        animation-delay: 8s;
+    }
+}
+
+@keyframes marquee-scroll {
+    from {
+        transform: translateX(100vw);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .marquee-scroll {
+        animation-name: marquee-scroll;
+        animation-duration: 18s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+    }
+
+    .marquee-scroll:hover {
+        animation-play-state: paused;
+    }
+}

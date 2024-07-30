@@ -5,6 +5,7 @@ import { FAQ } from '@/segments/faq'
 import { PricingSection } from './segments/pricing'
 import { Navbar } from './segments/navbar'
 import { Footer } from './segments/footer'
+import { CompanyLogos } from './segments/company-logos'
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
     <>
       <Navbar />
       <HeroSection />
+      <CompanyLogos />
       <FeatureSection />
       <PricingSection />
       <CTA />
