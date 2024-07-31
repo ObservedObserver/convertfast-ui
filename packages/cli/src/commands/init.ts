@@ -3,13 +3,13 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from 'url';
 import prompts from 'prompts';
-import { execa } from "execa";
+import { copyDir } from "@/utils/copy.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-
-const SEGMENT_ASSETS_DIR = path.join(PROJECT_ROOT, "./assets/_convertfast");
+const CONVERTFAST_ASSETS_DIRNAME = "_convertfast";
+const SEGMENT_ASSETS_DIR = path.join(PROJECT_ROOT, `./assets/${CONVERTFAST_ASSETS_DIRNAME}`);
 
 async function fileExists(filePath: string): Promise<boolean> {
   try {
@@ -106,7 +106,8 @@ init
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
 
     // copy static assets
-    await execa('cp', ['-r', SEGMENT_ASSETS_DIR, path.join(process.cwd(), 'public')]);
+    const destDir = path.join(process.cwd(), 'public', CONVERTFAST_ASSETS_DIRNAME);
+    await copyDir(SEGMENT_ASSETS_DIR, destDir);
 
     console.log("landing-pages.json has been created successfully!");
   });
