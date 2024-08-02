@@ -10,6 +10,8 @@
 
 Bootstrap a customizale beautiful landing page. Inspired by shadcn-ui, convertfast-ui provides a CLI tool that helps you create a landing page with customizable sections and components. All code can be used directly with copy-paste.
 
+Details of the components and sections can be found in the [documentation](https://ui.convertfa.st).
+
 ## Usage
 
 ### Install CLI
