@@ -9,17 +9,17 @@ interface FeatureProps {
 }
 
 const Feature: FC<FeatureProps> = ({ title, description, imageUrl, isImageLeft }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-24 items-center">
     {isImageLeft && (
       <div className="order-1 md:order-1">
         <img className="w-full max-w-2xl rounded-xl shadow-xl ring-1 ring-gray-400/10" src={imageUrl} alt={title} />
       </div>
     )}
     <div className={`order-2 ${isImageLeft ? 'md:order-2' : 'md:order-1'}`}>
-      <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">{title}</h2>
+      <h3 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">{title}</h3>
       <p className="mt-6 text-lg leading-8 text-muted-foreground">{description}</p>
       <div className="mt-4">
-        <Button variant="link">Learn more</Button>
+        <Button variant="secondary">Learn more</Button>
       </div>
     </div>
     {!isImageLeft && (
@@ -41,19 +41,19 @@ export const FeatureSection: FC = () => {
     {
       title: "Customizable Templates",
       description: "Choose from a wide range of professionally designed templates and easily customize them to match your brand.",
-      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/convertfast-ui-cli.png",
       isImageLeft: false,
     },
     {
       title: "Code Export and Integration",
       description: "Export clean, optimized code that seamlessly integrates with your existing projects, saving valuable development time.",
-      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/convertfast-ui-light-demo.png",
       isImageLeft: true,
     },
     {
       title: "Responsive Design",
       description: "Create mobile-friendly landing pages that look great on all devices, ensuring a consistent user experience.",
-      imageUrl: "https://ui.convertfa.st/images/graphic-walker-light-2.png",
+      imageUrl: "https://ui.convertfa.st/images/convertfast-demo.png",
       isImageLeft: false,
     },
   ];

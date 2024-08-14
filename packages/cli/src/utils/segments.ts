@@ -13,6 +13,17 @@ export const DEFAULT_SEGMENTS: ISegment[] = [
     ],
   },
   {
+    name: "LogoCloud",
+    file: "logo-cloud",
+    components: [
+      {
+        name: "Card",
+        file: "card",
+        source: "shadcn",
+      },
+    ],
+  },
+  {
     name: "FeatureSection",
     file: "feature-section",
     components: [
@@ -60,5 +71,5 @@ export const DEFAULT_SEGMENTS: ISegment[] = [
         source: "shadcn",
       },
     ],
-  },
+  }
 ];
