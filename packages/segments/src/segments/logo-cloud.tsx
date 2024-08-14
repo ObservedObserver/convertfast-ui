@@ -23,7 +23,7 @@ export function LogoCloud() {
               alt={logo.alt}
               width={158}
               height={48}
-              className={`col-span-2 max-h-12 w-full object-contain grayscale invert ${
+              className={`col-span-2 max-h-12 w-full object-contain grayscale dark:invert ${
                 index === 3
                   ? "sm:col-start-2 lg:col-span-1"
                   : index === 4

@@ -43,6 +43,11 @@ export const DEFAULT_SEGMENTS: ISegment[] = [
         file: "card",
         source: "shadcn",
       },
+      {
+        name: "Avatar",
+        file: "avatar",
+        source: "shadcn",
+      }
     ],
   },
   {
