@@ -132,3 +132,4 @@ dist
 packages/cli/templates
 packages/cli/assets
 packages/segments/public/*.png
+packages/segments/public/logos
