@@ -2,7 +2,7 @@ import { ISegment } from "../interfaces.ts";
 
 export function getTemplatePageCode(segments: ISegment[]) {
   return `${segments.map((seg) => `import { ${seg.name} } from './${seg.file}'`).join("\n")}
-  
+
 function LandingPage() {
   return (
     <>
