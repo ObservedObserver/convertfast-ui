@@ -35,6 +35,17 @@ export const DEFAULT_SEGMENTS: ISegment[] = [
     ],
   },
   {
+    name: "SocialProof",
+    file: "social-proof",
+    components: [
+      {
+        name: "Card",
+        file: "card",
+        source: "shadcn",
+      },
+    ],
+  },
+  {
     name: "CTA",
     file: "cta",
     components: [

@@ -6,6 +6,7 @@ import { PricingSection } from './segments/pricing'
 import { Navbar } from './segments/navbar'
 import { Footer } from './segments/footer'
 import { LogoCloud } from './segments/logo-cloud'
+import { SocialProof } from './segments/social-proof'
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
       <LogoCloud />
       <FeatureSection />
       <PricingSection />
+      <SocialProof />
       <CTA />
       <FAQ />
       <Footer />
