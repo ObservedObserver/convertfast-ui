@@ -69,7 +69,7 @@ export async function installSegmentDeps(segment: string) {
   // Install shadcn components
   for (const component of shadcnComponentsToInstall) {
     console.log(`Installing shadcn component: ${component}`);
-    await execa("npx", ["shadcn-ui@latest", "add", component], { cwd: process.cwd() });
+    await execa("npx", ["shadcn@latest", "add", component], { cwd: process.cwd() });
   }
 
   // Install npm packages
