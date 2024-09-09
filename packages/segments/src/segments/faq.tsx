@@ -11,7 +11,7 @@ interface FAQItem {
   answer: string;
 }
 
-const faqs: FAQItem[] = [
+const DEFAULT_ITEMS: FAQItem[] = [
   {
     question: "Why use ConvertFast to build landing pages?",
     answer:
@@ -39,7 +39,8 @@ const faqs: FAQItem[] = [
   },
 ];
 
-export const FAQ: FC = () => {
+export const FAQ: FC<{items?: FAQItem[]}> = (props) => {
+  const { items = DEFAULT_ITEMS } = props;
   return (
     <section className="bg-gradient-to-t from-zinc-50 to-white dark:from-zinc-950 to-black">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
@@ -48,7 +49,7 @@ export const FAQ: FC = () => {
             Frequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="space-y-4">
-            {faqs.map((faq, index) => (
+            {items.map((faq, index) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
