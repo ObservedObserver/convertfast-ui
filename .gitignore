@@ -134,3 +134,6 @@ packages/cli/assets
 packages/segments/public/*.png
 packages/segments/public/logos
 packages/segments/public/avatars
+
+# macOS system files
+.DS_Store
