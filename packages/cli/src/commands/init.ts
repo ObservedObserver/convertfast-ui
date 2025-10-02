@@ -21,13 +21,18 @@ async function fileExists(filePath: string): Promise<boolean> {
 }
 
 async function detectNextJsConfig(rootDir: string): Promise<{ router: 'app' | 'pages' } | null> {
-  const appRouterPath = path.join(rootDir, 'app');
-  const pagesRouterPath = path.join(rootDir, 'pages');
+  const routerCandidates: { router: 'app' | 'pages'; paths: string[] }[] = [
+    { router: 'app', paths: ['app', path.join('src', 'app')] },
+    { router: 'pages', paths: ['pages', path.join('src', 'pages')] },
+  ];
 
-  if (await fileExists(appRouterPath)) {
-    return { router: 'app' };
-  } else if (await fileExists(pagesRouterPath)) {
-    return { router: 'pages' };
+  for (const candidate of routerCandidates) {
+    for (const relativePath of candidate.paths) {
+      const absolutePath = path.join(rootDir, relativePath);
+      if (await fileExists(absolutePath)) {
+        return { router: candidate.router };
+      }
+    }
   }
 
   return null;

@@ -1,7 +1,20 @@
 import path from "path";
 import fs from "fs/promises";
 
-export async function resolveRouterPath() {
+async function pathExists(p: string): Promise<boolean> {
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function resolveRouterPath(): Promise<{
+  rootDir: string;
+  routerType: 'app' | 'pages';
+  pageFileName: 'page.tsx' | 'index.tsx';
+}> {
   const __dirname = process.cwd();
   let srcDir = "./";
   let config;
@@ -34,11 +47,38 @@ export async function resolveRouterPath() {
   }
 
   // Resolve the router path
-  if (!config?.nextjs?.router) {
+  const routerType = config?.nextjs?.router as 'app' | 'pages' | undefined;
+
+  if (!routerType) {
     throw new Error("Next.js router configuration not found in landing-pages.json");
   }
 
-  return path.resolve(__dirname, srcDir, config.nextjs.router);
+  const candidateDirs = [
+    path.resolve(__dirname, routerType),
+    path.resolve(__dirname, 'src', routerType),
+    path.resolve(__dirname, srcDir, routerType)
+  ];
+
+  let routerRootDir: string | undefined;
+
+  for (const candidate of candidateDirs) {
+    if (await pathExists(candidate)) {
+      routerRootDir = candidate;
+      break;
+    }
+  }
+
+  if (!routerRootDir) {
+    throw new Error(`Unable to locate Next.js ${routerType} directory. Checked: ${candidateDirs.join(', ')}`);
+  }
+
+  const pageFileName = routerType === 'app' ? 'page.tsx' : 'index.tsx';
+
+  return {
+    rootDir: routerRootDir,
+    routerType,
+    pageFileName
+  };
 }
 
 interface TsConfig {
