@@ -26,14 +26,14 @@ page.command("create")
     try {
       console.log(`Creating new landing page: ${pagePath}`);
 
-      const pagesRootDir = await resolveRouterPath();
+      const { rootDir: pagesRootDir, pageFileName } = await resolveRouterPath();
       const fullPagePath = path.join(pagesRootDir, pagePath);
 
       console.log(`Creating directory: ${fullPagePath}`);
       await fs.mkdir(fullPagePath, { recursive: true });
 
       const code = getTemplatePageCode(DEFAULT_SEGMENTS);
-      const pageFilePath = path.join(fullPagePath, 'page.tsx');
+      const pageFilePath = path.join(fullPagePath, pageFileName);
       console.log(`Writing page file: ${pageFilePath}`);
       await fs.writeFile(pageFilePath, code);
 
@@ -66,7 +66,7 @@ page.command("add")
     try {
       console.log(`Adding segment '${segmentFile}' to page '${pagePath}'`);
 
-      const pagesRootDir = await resolveRouterPath();
+      const { rootDir: pagesRootDir, pageFileName } = await resolveRouterPath();
       const fullPagePath = path.join(pagesRootDir, pagePath);
 
       // Check if the page exists
@@ -87,7 +87,7 @@ page.command("add")
       await fs.copyFile(sourceFile, destFile);
 
       // Update page.tsx to include the new segment
-      const pageFilePath = path.join(fullPagePath, 'page.tsx');
+      const pageFilePath = path.join(fullPagePath, pageFileName);
       let pageContent = await fs.readFile(pageFilePath, 'utf-8');
       
       // Add import statement if not already present

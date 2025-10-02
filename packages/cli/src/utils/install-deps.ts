@@ -44,7 +44,7 @@ export async function installSegmentDeps(segment: string) {
 
   // Resolve aliases and paths
   const aliases = await resolveAliasesPath();
-  const routerPath = await resolveRouterPath();
+  const { rootDir: routerRootDir } = await resolveRouterPath();
 
   // Assuming 'components' is a key in the aliases object
   const componentsPath = aliases['components'] || path.join(process.cwd(), 'components');
@@ -58,7 +58,7 @@ export async function installSegmentDeps(segment: string) {
     } else if (component.source === "convertfast") {
       await copyConvertUiComponent(
         component.file,
-        path.join(routerPath, '..', 'components'),
+        path.join(routerRootDir, '..', 'components'),
         componentsPath
       );
     } else {
