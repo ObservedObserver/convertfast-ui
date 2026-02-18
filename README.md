@@ -27,10 +27,22 @@ npx convertfast-ui@latest init
 npx convertfast-ui@latest page create <page-name>
 ```
 
+### Create new landing page with a template
+
+```bash
+npx convertfast-ui@latest page create <page-name> --template editorial
+```
+
+`--template default` uses the current ConvertFast template design.
+
 ### Add new section to landing page
 
 ```bash
 npx convertfast-ui@latest page <page-name> add <section-name>
+```
+
+```bash
+npx convertfast-ui@latest page add <page-name> <section-name> --template editorial
 ```
 
 ## Features

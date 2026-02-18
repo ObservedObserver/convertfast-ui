@@ -6,12 +6,11 @@ import { resolveRouterPath } from '../utils/get-config.ts';
 import { DEFAULT_SEGMENTS } from "../utils/segments.ts";
 import { getTemplatePageCode } from "../utils/templates.ts";
 import { installSegmentDeps } from "../utils/install-deps.ts";
+import { DEFAULT_TEMPLATE_NAME, TEMPLATE_NAMES, resolveTemplateConfig } from "../utils/template-options.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-
-const SEGMENT_SOURCE_DIR = path.join(PROJECT_ROOT, "./templates/src");
 
 export const page = new Command();
 
@@ -22,9 +21,17 @@ page
 page.command("create")
   .description("Create a new landing page")
   .argument("<page>", "the page name to create (can be a relative path)")
-  .action(async (pagePath: string) => {
+  .option(
+    "-t, --template <template>",
+    `template style (${TEMPLATE_NAMES.join(", ")})`,
+    DEFAULT_TEMPLATE_NAME,
+  )
+  .action(async (pagePath: string, options: { template: string }) => {
     try {
       console.log(`Creating new landing page: ${pagePath}`);
+      const selectedTemplate = options.template || DEFAULT_TEMPLATE_NAME;
+      const { segmentsDir } = resolveTemplateConfig(PROJECT_ROOT, selectedTemplate);
+      console.log(`Using template: ${selectedTemplate}`);
 
       const { rootDir: pagesRootDir, pageFileName } = await resolveRouterPath();
       const fullPagePath = path.join(pagesRootDir, pagePath);
@@ -38,7 +45,7 @@ page.command("create")
       await fs.writeFile(pageFilePath, code);
 
       for (let seg of DEFAULT_SEGMENTS) {
-        const sourceFile = path.join(SEGMENT_SOURCE_DIR, "segments", `${seg.file}.tsx`);
+        const sourceFile = path.join(segmentsDir, `${seg.file}.tsx`);
         const destFile = path.join(fullPagePath, `${seg.file}.tsx`);
         console.log(`Copying segment file: ${destFile}`);
         await fs.copyFile(sourceFile, destFile);
@@ -62,9 +69,17 @@ page.command("add")
   .description("Add a segment to an existing landing page")
   .argument("<page>", "the page name to add the segment to (can be a relative path)")
   .argument("<segment>", "the segment to add (e.g., cta, hero-section)")
-  .action(async (pagePath: string, segmentFile: string) => {
+  .option(
+    "-t, --template <template>",
+    `template style (${TEMPLATE_NAMES.join(", ")})`,
+    DEFAULT_TEMPLATE_NAME,
+  )
+  .action(async (pagePath: string, segmentFile: string, options: { template: string }) => {
     try {
       console.log(`Adding segment '${segmentFile}' to page '${pagePath}'`);
+      const selectedTemplate = options.template || DEFAULT_TEMPLATE_NAME;
+      const { segmentsDir } = resolveTemplateConfig(PROJECT_ROOT, selectedTemplate);
+      console.log(`Using template: ${selectedTemplate}`);
 
       const { rootDir: pagesRootDir, pageFileName } = await resolveRouterPath();
       const fullPagePath = path.join(pagesRootDir, pagePath);
@@ -81,7 +96,7 @@ page.command("add")
       }
 
       // Copy segment file
-      const sourceFile = path.join(SEGMENT_SOURCE_DIR, "segments", `${segment.file}.tsx`);
+      const sourceFile = path.join(segmentsDir, `${segment.file}.tsx`);
       const destFile = path.join(fullPagePath, `${segment.file}.tsx`);
       console.log(`Copying segment file: ${destFile}`);
       await fs.copyFile(sourceFile, destFile);
