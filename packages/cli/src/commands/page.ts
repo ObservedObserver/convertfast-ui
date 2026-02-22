@@ -7,10 +7,57 @@ import { DEFAULT_SEGMENTS } from "../utils/segments.ts";
 import { getTemplatePageCode } from "../utils/templates.ts";
 import { installSegmentDeps } from "../utils/install-deps.ts";
 import { DEFAULT_TEMPLATE_NAME, TEMPLATE_NAMES, resolveTemplateConfig } from "../utils/template-options.ts";
+import { RegistryMode, installConvertfastRegistryBlock, resolveRegistryMode } from "../utils/registry.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
+
+type PageCommandOptions = {
+  template: string;
+  registry: string;
+  namespace: string;
+};
+
+type RegistryInstallState = {
+  enabled: boolean;
+};
+
+async function installDepsWithRegistryFallback(params: {
+  segmentName: string;
+  segmentFilePath: string;
+  templateName: string;
+  registryMode: RegistryMode;
+  namespace: string;
+  registryState?: RegistryInstallState;
+}) {
+  const { segmentName, segmentFilePath, templateName, registryMode, namespace, registryState } = params;
+  const canUseRegistry = registryMode !== "off" && (registryState ? registryState.enabled : true);
+
+  if (canUseRegistry) {
+    const registryResult = await installConvertfastRegistryBlock({
+      blockName: segmentName,
+      templateName,
+      namespace,
+      mode: registryMode
+    });
+
+    if (registryResult.ok) {
+      console.log(`Installed section '${segmentName}' from registry '${registryResult.target}'.`);
+      return;
+    }
+
+    if (registryMode === "auto") {
+      const reason = registryResult.error ? registryResult.error.message : "unknown error";
+      console.warn(`Registry install skipped for '${segmentName}' (${reason}). Falling back to local dependency install.`);
+      if (registryState) {
+        registryState.enabled = false;
+      }
+    }
+  }
+
+  await installSegmentDeps(segmentFilePath);
+}
 
 export const page = new Command();
 
@@ -26,12 +73,18 @@ page.command("create")
     `template style (${TEMPLATE_NAMES.join(", ")})`,
     DEFAULT_TEMPLATE_NAME,
   )
-  .action(async (pagePath: string, options: { template: string }) => {
+  .option("--registry <mode>", "registry mode (auto, only, off)", "auto")
+  .option("-n, --namespace <namespace>", "registry namespace", "@convertfast")
+  .action(async (pagePath: string, options: PageCommandOptions) => {
     try {
       console.log(`Creating new landing page: ${pagePath}`);
       const selectedTemplate = options.template || DEFAULT_TEMPLATE_NAME;
+      const registryMode = resolveRegistryMode(options.registry || "auto");
       const { segmentsDir } = resolveTemplateConfig(PROJECT_ROOT, selectedTemplate);
       console.log(`Using template: ${selectedTemplate}`);
+      console.log(`Registry mode: ${registryMode}`);
+
+      const registryState: RegistryInstallState = { enabled: true };
 
       const { rootDir: pagesRootDir, pageFileName } = await resolveRouterPath();
       const fullPagePath = path.join(pagesRootDir, pagePath);
@@ -50,8 +103,14 @@ page.command("create")
         console.log(`Copying segment file: ${destFile}`);
         await fs.copyFile(sourceFile, destFile);
 
-        // Install dependencies for each segment
-        await installSegmentDeps(seg.file);
+        await installDepsWithRegistryFallback({
+          segmentName: seg.file,
+          segmentFilePath: destFile,
+          templateName: selectedTemplate,
+          registryMode,
+          namespace: options.namespace,
+          registryState
+        });
       }
 
       console.log(`Landing page '${pagePath}' has been successfully created.`);
@@ -74,12 +133,16 @@ page.command("add")
     `template style (${TEMPLATE_NAMES.join(", ")})`,
     DEFAULT_TEMPLATE_NAME,
   )
-  .action(async (pagePath: string, segmentFile: string, options: { template: string }) => {
+  .option("--registry <mode>", "registry mode (auto, only, off)", "auto")
+  .option("-n, --namespace <namespace>", "registry namespace", "@convertfast")
+  .action(async (pagePath: string, segmentFile: string, options: PageCommandOptions) => {
     try {
       console.log(`Adding segment '${segmentFile}' to page '${pagePath}'`);
       const selectedTemplate = options.template || DEFAULT_TEMPLATE_NAME;
+      const registryMode = resolveRegistryMode(options.registry || "auto");
       const { segmentsDir } = resolveTemplateConfig(PROJECT_ROOT, selectedTemplate);
       console.log(`Using template: ${selectedTemplate}`);
+      console.log(`Registry mode: ${registryMode}`);
 
       const { rootDir: pagesRootDir, pageFileName } = await resolveRouterPath();
       const fullPagePath = path.join(pagesRootDir, pagePath);
@@ -122,8 +185,13 @@ page.command("add")
 
       await fs.writeFile(pageFilePath, pageContent);
 
-      // Install dependencies for the added segment
-      await installSegmentDeps(segment.file);
+      await installDepsWithRegistryFallback({
+        segmentName: segment.file,
+        segmentFilePath: destFile,
+        templateName: selectedTemplate,
+        registryMode,
+        namespace: options.namespace
+      });
 
       console.log(`Segment '${segment.name}' has been successfully added to page '${pagePath}'.`);
     } catch (error) {

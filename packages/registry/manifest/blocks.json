@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "namespace": "@convertfast",
+  "items": [
+    {
+      "name": "hero-section",
+      "title": "Hero Section",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/hero-section.tsx",
+      "registryDependencies": ["button"]
+    },
+    {
+      "name": "logo-cloud",
+      "title": "Logo Cloud",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/logo-cloud.tsx",
+      "registryDependencies": ["card"]
+    },
+    {
+      "name": "feature-section",
+      "title": "Feature Section",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/feature-section.tsx",
+      "registryDependencies": ["button"]
+    },
+    {
+      "name": "social-proof",
+      "title": "Social Proof",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/social-proof.tsx",
+      "registryDependencies": ["card", "avatar"]
+    },
+    {
+      "name": "cta",
+      "title": "Call To Action",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/cta.tsx",
+      "registryDependencies": ["button"]
+    },
+    {
+      "name": "faq",
+      "title": "FAQ",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/faq.tsx",
+      "registryDependencies": ["accordion"]
+    },
+    {
+      "name": "pricing",
+      "title": "Pricing",
+      "variant": "default",
+      "sourceFile": "packages/segments/src/segments/pricing.tsx",
+      "registryDependencies": ["button", "card"]
+    },
+    {
+      "name": "hero-section-editorial",
+      "title": "Hero Section (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/hero-section.tsx",
+      "registryDependencies": ["button"]
+    },
+    {
+      "name": "logo-cloud-editorial",
+      "title": "Logo Cloud (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/logo-cloud.tsx",
+      "registryDependencies": ["card"]
+    },
+    {
+      "name": "feature-section-editorial",
+      "title": "Feature Section (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/feature-section.tsx",
+      "registryDependencies": ["button"]
+    },
+    {
+      "name": "social-proof-editorial",
+      "title": "Social Proof (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/social-proof.tsx",
+      "registryDependencies": ["card", "avatar"]
+    },
+    {
+      "name": "cta-editorial",
+      "title": "Call To Action (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/cta.tsx",
+      "registryDependencies": ["button"]
+    },
+    {
+      "name": "faq-editorial",
+      "title": "FAQ (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/faq.tsx",
+      "registryDependencies": ["accordion"]
+    },
+    {
+      "name": "pricing-editorial",
+      "title": "Pricing (Editorial)",
+      "variant": "editorial",
+      "sourceFile": "packages/segments/src/editorial/segments/pricing.tsx",
+      "registryDependencies": ["button", "card"]
+    }
+  ]
+}

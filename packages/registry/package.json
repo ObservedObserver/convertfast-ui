@@ -1,0 +1,10 @@
+{
+  "name": "@convertfast/registry",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "node ./scripts/build-registry.mjs",
+    "validate": "node ./scripts/validate-registry.mjs"
+  }
+}

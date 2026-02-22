@@ -45,6 +45,22 @@ npx convertfast-ui@latest page <page-name> add <section-name>
 npx convertfast-ui@latest page add <page-name> <section-name> --template editorial
 ```
 
+```bash
+npx convertfast-ui@latest page add <page-name> <section-name> --registry auto --namespace @convertfast
+```
+
+`--registry auto` will try ConvertFast registry blocks first and automatically fall back to local dependency installation if registry install fails. Valid values: `auto`, `only`, `off`.
+
+### Install block via shadcn registry
+
+```bash
+npx convertfast-ui@latest block add hero-section
+```
+
+```bash
+npx convertfast-ui@latest block add hero-section --template editorial
+```
+
 ## Features
 Landing pages created by convertfast-ui have the following features:
 + [x] Responsive design

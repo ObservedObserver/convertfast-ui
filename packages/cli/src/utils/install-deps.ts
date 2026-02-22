@@ -1,22 +1,10 @@
 import { execa } from "execa";
-import { DEFAULT_SEGMENTS } from "./segments.ts";
 import path from "path";
 import fs from "fs/promises";
-import { IComponent } from "@/interfaces.ts";
-import { resolveAliasesPath } from "./get-config.ts"
-import { resolveRouterPath } from "./get-config.ts";
-
-function resolveComponentDeps(component: string): IComponent[] | undefined {
-  const segment = DEFAULT_SEGMENTS.find((seg) => seg.file === component);
-  if (!segment) {
-    throw new Error(`Segment '${component}' is not a valid segment.`);
-  }
-  return segment.components;
-}
+import { resolveAliasesPath } from "./get-config.ts";
 
 async function isShadcnComponentInstalled(component: string, uiComponentsPath: string): Promise<boolean> {
   const componentPath = path.join(uiComponentsPath, `${component}.tsx`);
-  console.log(componentPath)
   try {
     await fs.access(componentPath);
     return true;
@@ -25,58 +13,40 @@ async function isShadcnComponentInstalled(component: string, uiComponentsPath: s
   }
 }
 
-async function copyConvertUiComponent(component: string, sourcePath: string, destPath: string): Promise<void> {
-  await fs.copyFile(
-    path.join(sourcePath, `${component}.tsx`),
-    path.join(destPath, `${component}.tsx`)
-  );
-}
+function resolveShadcnComponentDepsFromSource(code: string): string[] {
+  const pattern = /from\s+["']@\/components\/ui\/([a-z0-9-]+)["']/g;
+  const deps = new Set<string>();
+  let match: RegExpExecArray | null = pattern.exec(code);
 
-export async function installSegmentDeps(segment: string) {
-  const components = resolveComponentDeps(segment);
-
-  if (!components) {
-    throw new Error(`Segment '${segment}' does not exist.`);
+  while (match) {
+    deps.add(match[1]);
+    match = pattern.exec(code);
   }
 
+  return [...deps];
+}
+
+export async function installSegmentDeps(segmentFilePath: string) {
   const shadcnComponentsToInstall: string[] = [];
-  const npmPackagesToInstall: string[] = [];
 
-  // Resolve aliases and paths
   const aliases = await resolveAliasesPath();
-  const { rootDir: routerRootDir } = await resolveRouterPath();
+  const componentsPath = aliases["components"] || path.join(process.cwd(), "components");
+  const uiComponentsPath = path.join(componentsPath, "ui");
 
-  // Assuming 'components' is a key in the aliases object
-  const componentsPath = aliases['components'] || path.join(process.cwd(), 'components');
-  const uiComponentsPath = path.join(componentsPath, 'ui');
+  const segmentCode = await fs.readFile(segmentFilePath, "utf-8");
+  const shadcnDeps = resolveShadcnComponentDepsFromSource(segmentCode);
 
-  for (const component of components) {
-    if (component.source === "shadcn") {
-      if (!(await isShadcnComponentInstalled(component.file, uiComponentsPath))) {
-        shadcnComponentsToInstall.push(component.file);
-      }
-    } else if (component.source === "convertfast") {
-      await copyConvertUiComponent(
-        component.file,
-        path.join(routerRootDir, '..', 'components'),
-        componentsPath
-      );
-    } else {
-      npmPackagesToInstall.push(component.name);
+  for (const component of shadcnDeps) {
+    if (!(await isShadcnComponentInstalled(component, uiComponentsPath))) {
+      shadcnComponentsToInstall.push(component);
     }
   }
 
-  // Install shadcn components
   for (const component of shadcnComponentsToInstall) {
     console.log(`Installing shadcn component: ${component}`);
     await execa("npx", ["shadcn@latest", "add", component], { cwd: process.cwd() });
   }
 
-  // Install npm packages
-  if (npmPackagesToInstall.length > 0) {
-    console.log(`Installing npm packages: ${npmPackagesToInstall.join(", ")}`);
-    await execa("npm", ["install", ...npmPackagesToInstall], { cwd: process.cwd() });
-  }
-
-  console.log(`Finished installing dependencies for segment '${segment}'`);
+  const segmentName = path.basename(segmentFilePath, path.extname(segmentFilePath));
+  console.log(`Finished installing dependencies for segment '${segmentName}'`);
 }

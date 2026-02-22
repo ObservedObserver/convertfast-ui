@@ -3,89 +3,30 @@ import { ISegment } from "../interfaces.ts";
 export const DEFAULT_SEGMENTS: ISegment[] = [
   {
     name: "HeroSection",
-    file: "hero-section",
-    components: [
-      {
-        name: "Button",
-        file: "button",
-        source: "shadcn",
-      },
-    ],
+    file: "hero-section"
   },
   {
     name: "LogoCloud",
-    file: "logo-cloud",
-    components: [
-      {
-        name: "Card",
-        file: "card",
-        source: "shadcn",
-      },
-    ],
+    file: "logo-cloud"
   },
   {
     name: "FeatureSection",
-    file: "feature-section",
-    components: [
-      {
-        name: "Button",
-        file: "button",
-        source: "shadcn",
-      },
-    ],
+    file: "feature-section"
   },
   {
     name: "SocialProof",
-    file: "social-proof",
-    components: [
-      {
-        name: "Card",
-        file: "card",
-        source: "shadcn",
-      },
-      {
-        name: "Avatar",
-        file: "avatar",
-        source: "shadcn",
-      }
-    ],
+    file: "social-proof"
   },
   {
     name: "CTA",
-    file: "cta",
-    components: [
-      {
-        name: "Button",
-        file: "button",
-        source: "shadcn",
-      },
-    ],
+    file: "cta"
   },
   {
     name: "FAQ",
-    file: "faq",
-    components: [
-      {
-        name: "Accordion",
-        file: "accordion",
-        source: "shadcn",
-      },
-    ],
+    file: "faq"
   },
   {
     name: "PricingSection",
-    file: "pricing",
-    components: [
-      {
-        name: "Button",
-        file: "button",
-        source: "shadcn",
-      },
-      {
-        name: "Card",
-        file: "card",
-        source: "shadcn",
-      },
-    ],
+    file: "pricing"
   }
 ];

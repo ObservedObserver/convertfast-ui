@@ -11,6 +11,8 @@
   ],
   "scripts": {
     "build": "yarn workspace convertfast-ui build",
+    "registry:build": "yarn workspace @convertfast/registry build",
+    "registry:validate": "yarn workspace @convertfast/registry validate",
     "copy-templates": "cp -r packages/segments/src packages/cli/templates",
     "copy-assets": "cp -r packages/segments/public packages/cli/assets",
     "postbuild": "yarn copy-templates && yarn copy-assets"
