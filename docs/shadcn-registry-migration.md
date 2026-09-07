@@ -42,19 +42,19 @@ Static imports determine `registryDependencies` and npm `dependencies`. The mani
 
 First, validate and ship the npm package, including installation tests against the packed artifact. Stop for the maintainer to publish the package.
 
-Then update the documentation site and publish the hosted registry as part of that site's deployment. A suggested URL shape is `/r/registry.json` and `/r/<item>.json`. Confirm each endpoint serves the generated JSON, including embedded file content. The historical site host is `ui.convertfa.st`; the eventual canonical domain is configured during the separate domain migration.
+Then update the documentation site and publish the hosted registry as part of that site's deployment. The hosted URL shape is `https://convertfa.st/r/registry.json` and `https://convertfa.st/r/<item>.json`. Confirm each endpoint serves the generated JSON, including embedded file content. The canonical site host is `convertfa.st`. Keep `ui.convertfa.st` attached as a permanent redirect to preserve existing links and assets used by the published 0.2.0 package.
 
 A hosted registry can be configured explicitly in a consumer's `components.json`:
 
 ```json
 {
   "registries": {
-    "@convertfast": "https://YOUR-CONFIRMED-HOST/r/{name}.json"
+    "@convertfast": "https://convertfa.st/r/{name}.json"
   }
 }
 ```
 
-Replace the placeholder only after verifying the live endpoint. Namespace installation then takes this form:
+Namespace installation then takes this form:
 
 ```bash
 npx shadcn@latest add @convertfast/hero-section

@@ -85,4 +85,4 @@ yarn test:release
 
 Packaging runs the build and stages only the CLI, template source, installable registry payloads, assets, and license. Publishing is a separate maintainer action after verification.
 
-[Documentation](https://ui.convertfa.st) · [MIT license](LICENSE)
+[Documentation](https://convertfa.st) · [MIT license](LICENSE)
