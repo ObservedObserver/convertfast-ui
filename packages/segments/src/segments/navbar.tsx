@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,8 +32,10 @@ export function Navbar() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="flex items-center space-x-4 md:w-auto md:flex-none">
             <Button variant="outline">Sign In</Button>
-            <div
-              className="w-14 h-8 rounded-full p-1 cursor-pointer bg-secondary"
+            <button
+              type="button"
+              aria-label="Toggle color theme"
+              className="relative w-14 h-8 rounded-full p-1 cursor-pointer bg-secondary"
               onClick={toggleTheme}
             >
               <div
@@ -45,7 +49,7 @@ export function Navbar() {
                   <Sun className="h-4 w-4 text-primary" />
                 )}
               </div>
-            </div>
+            </button>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

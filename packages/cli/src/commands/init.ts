@@ -1,118 +1,35 @@
 import { Command } from "commander";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from 'url';
-import prompts from 'prompts';
-import { copyDir } from "@/utils/copy.ts";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { copyDir } from "../utils/copy.ts";
+import { detectNextJsConfig, pathExists, readJson, safeProjectPath } from "../utils/get-config.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PROJECT_ROOT = path.resolve(__dirname, '..');
-const CONVERTFAST_ASSETS_DIRNAME = "_convertfast";
-const SEGMENT_ASSETS_DIR = path.join(PROJECT_ROOT, `./assets/${CONVERTFAST_ASSETS_DIRNAME}`);
+const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-async function fileExists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function detectNextJsConfig(rootDir: string): Promise<{ router: 'app' | 'pages' } | null> {
-  const routerCandidates: { router: 'app' | 'pages'; paths: string[] }[] = [
-    { router: 'app', paths: ['app', path.join('src', 'app')] },
-    { router: 'pages', paths: ['pages', path.join('src', 'pages')] },
-  ];
-
-  for (const candidate of routerCandidates) {
-    for (const relativePath of candidate.paths) {
-      const absolutePath = path.join(rootDir, relativePath);
-      if (await fileExists(absolutePath)) {
-        return { router: candidate.router };
+export const init = new Command("init")
+  .description("Detect the Next.js version, router and shadcn configuration")
+  .option("-y, --yes", "run without prompts (configuration is detected automatically)")
+  .option("--force", "replace an existing landing-pages.json")
+  .option("--router <router>", "select app or pages when both exist")
+  .option("--components <path>", "path to components.json")
+  .action(async (options) => {
+    const root = process.cwd();
+    const configPath = await safeProjectPath(root, "landing-pages.json");
+    if (await pathExists(configPath) && !options.force) throw new Error("landing-pages.json already exists. Use --force to replace it.");
+    const nextjs = await detectNextJsConfig(root, options.router);
+    let componentsPath = options.components;
+    if (!componentsPath) {
+      for (const candidate of ["components.json", "src/components.json", "lib/components.json"]) {
+        if (await pathExists(path.join(root, candidate))) { componentsPath = candidate; break; }
       }
     }
-  }
-
-  return null;
-}
-
-async function findComponentsJsonPath(rootDir: string): Promise<string | null> {
-  const commonPaths = [
-    'components.json',
-    'src/components.json',
-    'lib/components.json',
-  ];
-
-  for (const relativePath of commonPaths) {
-    const fullPath = path.join(rootDir, relativePath);
-    if (await fileExists(fullPath)) {
-      return relativePath;
-    }
-  }
-
-  return null;
-}
-
-export const init = new Command();
-
-init
-  .name("init")
-  .description("Initialize landing-pages.json configuration file")
-  .action(async () => {
-    console.log("Initializing landing-pages.json configuration...");
-
-    const config: any = {};
-
-    // Detect NextJS configuration
-    const nextJsConfig = await detectNextJsConfig(process.cwd());
-    if (nextJsConfig) {
-      config.nextjs = nextJsConfig;
-    } else {
-      const { useNextJs } = await prompts({
-        type: 'confirm',
-        name: 'useNextJs',
-        message: 'Are you using Next.js?',
-        initial: false
-      });
-
-      if (useNextJs) {
-        const { routerType } = await prompts({
-          type: 'select',
-          name: 'routerType',
-          message: 'Which Next.js router are you using?',
-          choices: [
-            { title: 'App Router', value: 'app' },
-            { title: 'Pages Router', value: 'pages' }
-          ],
-          initial: 0
-        });
-        config.nextjs = { router: routerType };
-      }
-    }
-
-    // Find components.json
-    const componentsJsonPath = await findComponentsJsonPath(process.cwd());
-    if (componentsJsonPath) {
-      config.components = { path: componentsJsonPath };
-    } else {
-      const { componentsPath } = await prompts({
-        type: 'text',
-        name: 'componentsPath',
-        message: 'Enter the path to your components.json file:',
-        initial: 'components.json'
-      });
-      config.components = { path: componentsPath };
-    }
-
-    // Write the configuration to landing-pages.json
-    const configPath = path.join(process.cwd(), 'landing-pages.json');
-    await fs.writeFile(configPath, JSON.stringify(config, null, 2));
-
-    // copy static assets
-    const destDir = path.join(process.cwd(), 'public', CONVERTFAST_ASSETS_DIRNAME);
-    await copyDir(SEGMENT_ASSETS_DIR, destDir);
-
-    console.log("landing-pages.json has been created successfully!");
+    if (!componentsPath) throw new Error("components.json not found. Initialize shadcn first with npx shadcn@latest init.");
+    const componentsFile = await safeProjectPath(root, componentsPath);
+    const components = await readJson(componentsFile);
+    if (!components.aliases?.components || components.tsx === false) throw new Error("A TypeScript shadcn configuration with aliases.components is required.");
+    const assets = await safeProjectPath(root, "public/_convertfast");
+    await copyDir(path.join(PACKAGE_ROOT, "assets/_convertfast"), assets);
+    await fs.writeFile(configPath, JSON.stringify({ nextjs, components: { path: componentsPath } }, null, 2) + "\n");
+    console.log(`Initialized Next.js ${nextjs.version}, ${nextjs.directory}, ${componentsPath}.`);
   });

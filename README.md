@@ -1,74 +1,88 @@
-# convertfast-ui
+# ConvertFast UI
 
-<img width="1896" alt="convertfast-demo" src="https://github.com/user-attachments/assets/cbf9a421-6c61-486d-9af6-1096f874cb79">
+Generate editable landing pages and shadcn blocks in an existing Next.js project. The CLI copies source into your project, where you can change the content and design.
 
-<img width="1801" alt="convertfast-ui-light-demo" src="https://github.com/user-attachments/assets/18e0356b-9377-4c9b-81c5-22e6fcc62d71">
+## Requirements
 
-![convertfast-ui npm](https://img.shields.io/npm/v/convertfast-ui)
-![GitHub License](https://img.shields.io/github/license/ObservedObserver/convertfast-ui)
+- Node.js 20.18.1 or newer.
+- A TypeScript Next.js 14, 15, or 16 project with an App or Pages Router.
+- Tailwind CSS 3 or 4 and a configured shadcn `components.json`.
 
+The included Next.js starter uses Next.js 16.3.4, React 19, and Tailwind CSS 4. Both `app` / `pages` and `src/app` / `src/pages` layouts are supported. If both routers exist, initialization chooses App Router; use `--router pages` to select Pages Router.
 
-Bootstrap a customizale beautiful landing page. Inspired by shadcn-ui, convertfast-ui provides a CLI tool that helps you create a landing page with customizable sections and components. All code can be used directly with copy-paste.
+## Create a landing page
 
-Details of the components and sections can be found in the [documentation](https://ui.convertfa.st).
+Initialize shadcn first if the project does not already use it:
 
-## Usage
-
-### Install CLI
-
-```bash
-npx convertfast-ui@latest init
+```sh
+npx shadcn@latest init
 ```
 
+Then initialize ConvertFast and generate a route:
 
-### Create new landing page
-
-```bash
-npx convertfast-ui@latest page create <page-name>
+```sh
+npx convertfast-ui@latest init --yes
+npx convertfast-ui@latest page create marketing
+npx convertfast-ui@latest page create launch --template editorial
 ```
 
-### Create new landing page with a template
+Use `.` as the page name to create the homepage. Existing pages and sections are preserved unless you pass `--force`. Replace the sample text, testimonials, prices, and links before publishing a generated page.
 
-```bash
-npx convertfast-ui@latest page create <page-name> --template editorial
+The `default` and `editorial` templates include hero, logo cloud, features, social proof, CTA, FAQ, and pricing sections. Missing shadcn components are installed automatically, which requires network access. `--skip-install` copies source without installing dependencies.
+
+App Router sections live in the route's `_components` folder. Pages Router sections live under the configured components directory, outside `pages`, so Next.js does not register them as routes.
+
+## Add or replace a section
+
+```sh
+npx convertfast-ui@latest page add marketing faq
+npx convertfast-ui@latest page add marketing hero-section --template editorial --force
 ```
 
-`--template default` uses the current ConvertFast template design.
+For a custom page, place `{/* convertfast:sections */}` where new sections should appear. Generated pages already have this marker.
 
-### Add new section to landing page
+## Install a standalone block
 
-```bash
-npx convertfast-ui@latest page <page-name> add <section-name>
-```
-
-```bash
-npx convertfast-ui@latest page add <page-name> <section-name> --template editorial
-```
-
-```bash
-npx convertfast-ui@latest page add <page-name> <section-name> --registry auto --namespace @convertfast
-```
-
-`--registry auto` tries installing ConvertFast registry blocks first, then automatically falls back to local dependency installation if registry install fails. Valid values: `auto`, `only`, `off`.
-
-### Install block via shadcn registry
-
-```bash
+```sh
 npx convertfast-ui@latest block add hero-section
+npx convertfast-ui@latest block add faq --template editorial
 ```
 
-```bash
-npx convertfast-ui@latest block add hero-section --template editorial
+Blocks use the registry JSON bundled in the npm package. No ConvertFast registry server or namespace setup is required. ConvertFast uses the tested shadcn CLI 4.21.0, which still downloads its dependencies. Blocks go into your configured components directory; import the installed component into a page. Bundled blocks require `--force` to replace; existing public assets and shared UI components are preserved.
+
+To use a separately configured registry, pass `--namespace @your-registry`. With remote registries, `--force` follows shadcn overwrite behavior, including the registry's dependencies and assets. Page generation supports explicit `--registry auto` or `--registry only`; the default `off` uses bundled template source and installs only its missing UI dependencies.
+
+## Configuration and upgrades
+
+`init` records the detected Next.js version and router in `landing-pages.json`. It supports JSONC TypeScript configuration, inherited aliases, and custom `aliases.ui` and `aliases.utils`. Re-run `init --force` after moving your router, or select it explicitly:
+
+```sh
+npx convertfast-ui@latest init --yes --force --router pages
 ```
 
-## Features
-Landing pages created by convertfast-ui have the following features:
-+ [x] Responsive design
-+ [x] Dark mode, light mode
-+ [x] Customizable components, sections and pages
-+ [ ] Structured data for SEO
+An existing router-only `landing-pages.json` remains supported. Running the CLI does not upgrade your application's Next.js dependencies.
 
+Aliases must resolve within the current application directory. Shared component packages outside that directory are not supported by this release.
 
-## LICENSE
+`--components path/to/components.json` can select a nonstandard configuration for source generation. Automatic shadcn installation requires `components.json` at the project root; otherwise install the UI dependencies yourself and use `--skip-install`.
 
-Licensed under the [MIT](LICENSE) license.
+## Development and release checks
+
+```sh
+yarn install --frozen-lockfile
+yarn build
+yarn typecheck
+yarn test
+yarn workspace @convertfast/registry test
+yarn workspace template-app build
+yarn workspace template-app lint
+yarn workspace segments build
+yarn workspace segments lint
+yarn test:release
+```
+
+`test:release` packs the CLI, installs that tarball into six isolated Next.js projects, generates both templates, builds and serves the results, and checks routes and assets. The matrix covers Next.js 14/15/16, React 18/19, App/Pages Router, root/src directories, and Tailwind 3/4. Logs, the tarball manifest, and its SHA-256 are written to the ignored `.release` directory. Temporary fixture directories are retained for inspection and listed in `.release/validation.json`.
+
+Packaging runs the build and stages only the CLI, template source, installable registry payloads, assets, and license. Publishing is a separate maintainer action after verification.
+
+[Documentation](https://ui.convertfa.st) · [MIT license](LICENSE)

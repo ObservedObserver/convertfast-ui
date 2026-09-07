@@ -1,15 +1,16 @@
 import { ISegment } from "../interfaces.ts";
 
-export function getTemplatePageCode(segments: ISegment[]) {
-  return `${segments.map((seg) => `import { ${seg.name} } from './${seg.file}'`).join("\n")}
+export const SECTION_MARKER = "{/* convertfast:sections */}";
+export function getTemplatePageCode(segments: ISegment[], importDirectory = ".") {
+  return `${segments.map(seg => `import { ${seg.name} } from ${JSON.stringify(`${importDirectory}/${seg.file}`)};`).join("\n")}
 
-function LandingPage() {
+export default function LandingPage() {
   return (
-    <>
-      ${segments.map((seg) => `<${seg.name} />`).join("\n\t\t\t")}
-    </>
-  )
+    <main>
+      ${segments.map(seg => `<${seg.name} />`).join("\n      ")}
+      ${SECTION_MARKER}
+    </main>
+  );
 }
-
-export default LandingPage`;
+`;
 }

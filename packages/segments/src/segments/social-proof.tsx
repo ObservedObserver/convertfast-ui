@@ -53,7 +53,9 @@ const testimonials = [
   }
 ];
 
-const TestimonialCard = ({ testimonial }) => (
+type Testimonial = (typeof testimonials)[number];
+
+const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
   <Card className="my-4">
     <CardContent className="pt-6">
       <blockquote>
@@ -73,7 +75,7 @@ const TestimonialCard = ({ testimonial }) => (
   </Card>
 );
 
-const TestimonialsGrid = ({ testimonials }) => (
+const TestimonialsGrid = ({ testimonials }: { testimonials: Testimonial[] }) => (
   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {testimonials.map((testimonial) => (
       <TestimonialCard key={testimonial.author.handle} testimonial={testimonial} />

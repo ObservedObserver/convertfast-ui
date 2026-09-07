@@ -1,46 +1,45 @@
-# ConvertFast Registry Release Checklist
+# ConvertFast registry release checklist
 
-## 1. Build and Validate
+## Build the npm candidate
 
-1. Run `yarn registry:build`.
-2. Run `yarn registry:validate`.
-3. Confirm files exist in `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/registry/generated`.
+- Run `yarn registry:build`, `yarn registry:validate`, and `yarn workspace @convertfast/registry test`.
+- Confirm all 14 item JSONs exist in `packages/registry/generated` and every file entry contains inline `content`.
+- Build and pack the CLI using the repository's release scripts. Inspect the tarball, not only the workspace.
+- Confirm the packed `registry/` directory includes the index, 14 payloads, and the referenced component and SVG files.
+- Confirm the tarball contains no local analytical documents, credentials, development dependencies, or unrelated project files.
 
-## 2. Publish Registry Files
+The registry validator checks the output against current sources and metadata. It does not replace installation tests with the actual shadcn CLI.
 
-Publish all files under:
+## Test the packed artifact
 
-- `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/registry/generated`
+Use temporary Next.js projects with shadcn initialized. Include the supported Next.js, router, source-directory, and alias configurations in the package's test matrix.
 
-Target URL shape (flat):
+- Install each bundled block through the packed CLI. Cover both default and editorial variants.
+- Confirm the generated files use the project's aliases and declared dependencies install successfully.
+- Confirm the hero and CTA gradient SVG is written to `public/_convertfast/gradient-bg-0.svg`, including a standalone block installation before ConvertFast initialization.
+- Build the generated pages for production. Exercise interactive UI and check that local assets return successfully.
+- Test the local registry JSON directly with shadcn as well as through ConvertFast.
+- Verify failures produce a nonzero exit code and do not report successful installation.
+- Record the npm candidate version, tarball checksum, environment versions, commands, and results.
 
-1. `https://ui.convertfa.st/r/registry.json`
-2. `https://ui.convertfa.st/r/<item>.json`
-3. `https://ui.convertfa.st/r/<item>.tsx`
+Stop after the candidate passes. The maintainer performs npm publication. Keep the tested tarball available so publication uses the validated artifact.
 
-## 3. Smoke Tests
+## Publish the hosted registry in the website phase
 
-In a fresh Next.js project with shadcn initialized:
+After npm release, deploy the generated registry with the documentation website. These endpoints must return JSON:
 
-1. `npx shadcn@latest add @convertfast/hero-section`
-2. `npx shadcn@latest add @convertfast/hero-section-editorial`
-3. Ensure generated files compile with existing aliases and Tailwind setup.
+```text
+/r/registry.json
+/r/hero-section.json
+/r/hero-section-editorial.json
+```
 
-## 4. Shadcn Open Source Directory Submission
+Check every item endpoint, not only the index. Item payloads include source content; a separate public TSX endpoint is optional. If the index is distributed for consumers to rebuild, distribute its referenced source tree too.
 
-Submit a PR to:
+Use the confirmed live host to configure `@convertfast` in `components.json`. Test namespace installation in a fresh project. Only describe automatic namespace discovery after the official registry directory entry is available and tested.
 
-- `https://github.com/shadcn-ui/ui`
-- file: `apps/v4/registry/directory.json`
+## Domain migration checkpoint
 
-Add ConvertFast registry entry pointing to:
+Stop for the maintainer when the deployed site is ready for domain rebinding. After the root domain is bound, update the registry homepage and hosted registry URLs, and verify that the old host redirects item paths to the equivalent new URLs. Repeat installation against the new canonical endpoints and old redirected endpoints.
 
-- `https://ui.convertfa.st/r/registry.json`
-
-Then run their documented registry build step and include generated changes in PR.
-
-## 5. Post-Merge Verification
-
-1. Run `npx shadcn@latest search @convertfast`.
-2. Run `npx shadcn@latest add @convertfast/hero-section` in a clean project.
-3. Verify item install works without manual registry URL edits.
+Schema reference: [shadcn registry item specification](https://ui.shadcn.com/docs/registry/registry-item-json).

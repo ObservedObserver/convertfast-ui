@@ -131,6 +131,9 @@ dist
 
 packages/cli/templates
 packages/cli/assets
+packages/cli/registry
+packages/cli/LICENSE
+.release/
 packages/segments/public/*.png
 packages/segments/public/logos
 packages/segments/public/avatars

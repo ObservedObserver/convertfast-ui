@@ -1,29 +1,56 @@
 {
   "name": "convertfast-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "exports": "./dist/index.js",
   "bin": "./dist/index.js",
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup",
-    "exec": "node ./dist/index.js"
+    "build": "tsup && node ../../scripts/stage-package.mjs",
+    "exec": "node ./dist/index.js",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "prettier": {
     "tabWidth": 2,
     "printWidth": 120
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nextjs",
+    "react",
+    "shadcn",
+    "landing-page",
+    "cli"
+  ],
+  "author": "Observed Observer",
   "license": "MIT",
-  "description": "",
+  "description": "Generate editable landing pages and shadcn blocks for Next.js.",
   "devDependencies": {
-    "@types/prompts": "^2.4.9",
-    "tsup": "^8.1.0"
+    "tsup": "^8.1.0",
+    "@types/node": "^20",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "commander": "^12.1.0",
     "execa": "^9.3.0",
-    "prompts": "^2.4.2"
-  }
+    "jsonc-parser": "^3.3.1",
+    "get-tsconfig": "^4.14.3"
+  },
+  "homepage": "https://ui.convertfa.st",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ObservedObserver/convertfast-ui.git",
+    "directory": "packages/cli"
+  },
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "assets",
+    "registry",
+    "README.md",
+    "LICENSE"
+  ]
 }

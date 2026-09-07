@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Facebook, Twitter, Instagram, Github } from "lucide-react";
 
 export function Footer() {
   return (
@@ -86,20 +85,16 @@ export function Footer() {
         {/* Social Links */}
         <div className="flex justify-center mt-8 space-x-6">
           <a href="#" className="text-gray-400 hover:text-gray-500">
-            <span className="sr-only">Facebook</span>
-            <Facebook className="h-6 w-6" />
+            Facebook
           </a>
           <a href="#" className="text-gray-400 hover:text-gray-500">
-            <span className="sr-only">Instagram</span>
-            <Instagram className="h-6 w-6" />
+            Instagram
           </a>
           <a href="#" className="text-gray-400 hover:text-gray-500">
-            <span className="sr-only">Twitter</span>
-            <Twitter className="h-6 w-6" />
+            Twitter
           </a>
           <a href="#" className="text-gray-400 hover:text-gray-500">
-            <span className="sr-only">GitHub</span>
-            <Github className="h-6 w-6" />
+            GitHub
           </a>
         </div>
 

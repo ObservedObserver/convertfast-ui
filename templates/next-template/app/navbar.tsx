@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,15 +14,15 @@ import { useTheme } from "@/components/theme-provider";
 export function Navbar() {
   const { theme, setTheme } = useTheme();
   const handleThemeChange = (selectedTheme: "light" | "dark" | "system") => {
-      setTheme(selectedTheme); 
+      setTheme(selectedTheme);
   };
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 items-center px-4 sm:px-6 lg:px-8">
-        <a href="/" className="mr-2 flex items-center space-x-1">
+        <Link href="/" className="mr-2 flex items-center space-x-1">
           <img src="/photes-icon-1.svg" alt="Logo" className="h-8 w-8" />
           <span className="hidden font-bold sm:inline-block">Photos</span>
-        </a>
+        </Link>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
@@ -31,68 +32,68 @@ export function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
-                <a href="/" className="w-full">
+                <Link href="/" className="w-full">
                   Photos
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <a href="/pricing" className="w-full">
+                <Link href="/pricing" className="w-full">
                   Pricing
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <a href="/workspace" className="w-full">
+                <Link href="/workspace" className="w-full">
                   Workspace
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <a href="/tools" className="w-full">
+                <Link href="/tools" className="w-full">
                   Tools
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <a href="/contacts" className="w-full">
+                <Link href="/contacts" className="w-full">
                   Contacts
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <a href="/explore" className="w-full">
+                <Link href="/explore" className="w-full">
                   Explore
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <a href="/usecases" className="w-full">
+                <Link href="/usecases" className="w-full">
                   Use Cases
-                </a>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        <div className="mr-4 space-x-1 hidden lg:flex">   
+        <div className="mr-4 space-x-1 hidden lg:flex">
           <nav className="flex items-center space-x-1 text-sm">
-            <a href="/pricing" className="hover:bg-secondary rounded-md p-2">Pricing</a>
-            <a href="/workspace" className="flex items-center space-x-1 hover:bg-secondary rounded-md p-2">
+            <Link href="/pricing" className="hover:bg-secondary rounded-md p-2">Pricing</Link>
+            <Link href="/workspace" className="flex items-center space-x-1 hover:bg-secondary rounded-md p-2">
               <span className="">Workspace</span>
               <span className="bg-primary text-white px-1 rounded-lg transition hidden lg:inline">
                 Get Started
               </span>
-            </a>
-            <a href="/tools" className="hover:bg-secondary rounded-md p-2">Tools</a>
-            <a href="/contacts" className="hover:bg-secondary rounded-md p-2">Contacts</a>
-            <a href="/explore" className="hover:bg-secondary rounded-md p-2">Explore</a>
-            <a href="/usecases" className="hover:bg-secondary rounded-md p-2">Use Cases</a>
+            </Link>
+            <Link href="/tools" className="hover:bg-secondary rounded-md p-2">Tools</Link>
+            <Link href="/contacts" className="hover:bg-secondary rounded-md p-2">Contacts</Link>
+            <Link href="/explore" className="hover:bg-secondary rounded-md p-2">Explore</Link>
+            <Link href="/usecases" className="hover:bg-secondary rounded-md p-2">Use Cases</Link>
           </nav>
         </div>
         <div className="flex flex-1 items-center space-x-1 justify-end">
           <Button variant="outline">Feedback</Button>
-          <a 
-            href="/credits" 
+          <Link
+            href="/credits"
             className="items-center text-sm hover:bg-secondary rounded-md p-2"
           >
             <div>
               <span>Credits</span>
               <span className="ml-1 hidden xl:inline">17953 / 18000</span>
             </div>
-          </a>
+          </Link>
           <button
             aria-label="Change Language"
             className="w-4 h-4 flex items-center justify-center hover:bg-secondary rounded-md"
@@ -126,8 +127,8 @@ export function Navbar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <a 
-            href="/profile" 
+          <Link
+            href="/profile"
             className="block"
             aria-label="View Profile"
           >
@@ -138,7 +139,7 @@ export function Navbar() {
               />
               <AvatarFallback>Emily Chen</AvatarFallback>
             </Avatar>
-          </a>
+          </Link>
         </div>
       </div>
     </header>

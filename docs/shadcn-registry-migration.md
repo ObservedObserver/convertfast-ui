@@ -1,191 +1,76 @@
-# ConvertFast x shadcn Registry Migration
+# ConvertFast registry distribution
 
-## 1. Background
+ConvertFast ships 14 shadcn-compatible block payloads with its npm package. Bundling the payloads lets the CLI install a block before a hosted registry or namespace is available.
 
-The current section distribution model in `convertfast-ui` is:
+## Files and installation
 
-1. The CLI copies section source files directly into the user project.
-2. The CLI runs `shadcn add` based on hardcoded dependencies.
-
-Relevant code:
-
-- `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/cli/src/commands/page.ts`
-- `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/cli/src/utils/install-deps.ts`
-- `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/cli/src/utils/segments.ts`
-
-Compared to the current shadcn ecosystem model (registry-first), this causes:
-
-1. Users cannot directly install ConvertFast blocks with `shadcn add @convertfast/...`.
-2. Section metadata is scattered in CLI code and cannot be reused for docs or distribution.
-3. Dependency resolution, template variants, and publishing are tightly coupled in the CLI.
-
-## 2. Goals
-
-### 2.1 Product Goals
-
-1. Let users install ConvertFast blocks via shadcn CLI.
-2. Build a unified block metadata source that powers CLI, registry, and docs.
-3. Move ConvertFast CLI from “file copier” to “thin wrapper.”
-
-### 2.2 Technical Goals
-
-1. Publish a public, schema-compliant flat shadcn registry.
-2. Support template variants (`default`, `editorial`) as separate registry items.
-3. Keep backward compatibility during migration, then deprecate old flows.
-
-## 3. Target Architecture
-
-### 3.1 Core Principles
-
-1. Single source of truth: one block manifest drives all downstream outputs.
-2. Flat registry: publish only `/registry.json` and `/<item>.json`.
-3. CLI delegation: prefer `shadcn add` instead of custom dependency copy logic.
-
-### 3.2 Recommended Directory
+`packages/registry/manifest/blocks.json` defines block names, titles, variants, and source paths. The builder reads the current section source and creates:
 
 ```text
-/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/registry
-  /manifest
-    blocks.json               # canonical metadata source
-  /generated                  # build output (publishable)
-    registry.json
-    hero-section.json
-    hero-section-editorial.json
+packages/registry/generated/
+  registry.json
+  hero-section.json
+  hero-section-editorial.json
+  ...
+  components/
+    hero-section.tsx
+    hero-section-editorial.tsx
     ...
-  /scripts
-    build-registry.ts         # manifest -> generated
-    validate-registry.ts      # schema checks
+  public/_convertfast/
+    gradient-bg-0.svg
 ```
 
-Suggested publish endpoints:
+The npm build copies this directory to the CLI package's `registry/` directory. Each `<item>.json` embeds its source files in `files[].content`. A payload can be installed directly with shadcn from an absolute local JSON path. Its component files use `registry:component`, which respects the components alias in the consuming project's `components.json`. Asset files specify a `public/_convertfast/…` target.
 
-1. `https://ui.convertfa.st/r/registry.json`
-2. `https://ui.convertfa.st/r/<item>.json`
+The generated `registry.json` uses paths without embedded content and retains source copies alongside it. This is a registry build definition, while each `<item>.json` is a ready-to-install artifact. Publishing path-only item JSONs leaves shadcn without component contents and is not a valid release process.
 
-## 4. Naming and Installation Conventions
+## Available blocks
 
-### 4.1 Naming Rules
+| Section | Default item | Editorial item |
+| --- | --- | --- |
+| Hero | `hero-section` | `hero-section-editorial` |
+| Logos | `logo-cloud` | `logo-cloud-editorial` |
+| Features | `feature-section` | `feature-section-editorial` |
+| Testimonials | `social-proof` | `social-proof-editorial` |
+| Call to action | `cta` | `cta-editorial` |
+| FAQ | `faq` | `faq-editorial` |
+| Pricing | `pricing` | `pricing-editorial` |
 
-1. Default template: `<block-name>`, e.g. `hero-section`.
-2. Variant template: `<block-name>-<variant>`, e.g. `hero-section-editorial`.
-3. shadcn install target: `@convertfast/<item-name>`.
+Static imports determine `registryDependencies` and npm `dependencies`. The manifest's optional declarations are checked against those imports. Framework dependencies remain the responsibility of the Next.js project. A configured shadcn project provides `@/lib/utils` and the corresponding aliases. Referenced local SVG backgrounds are included in the payload.
 
-### 4.2 Installation Examples
+## Release order
+
+First, validate and ship the npm package, including installation tests against the packed artifact. Stop for the maintainer to publish the package.
+
+Then update the documentation site and publish the hosted registry as part of that site's deployment. A suggested URL shape is `/r/registry.json` and `/r/<item>.json`. Confirm each endpoint serves the generated JSON, including embedded file content. The historical site host is `ui.convertfa.st`; the eventual canonical domain is configured during the separate domain migration.
+
+A hosted registry can be configured explicitly in a consumer's `components.json`:
+
+```json
+{
+  "registries": {
+    "@convertfast": "https://YOUR-CONFIRMED-HOST/r/{name}.json"
+  }
+}
+```
+
+Replace the placeholder only after verifying the live endpoint. Namespace installation then takes this form:
 
 ```bash
 npx shadcn@latest add @convertfast/hero-section
 npx shadcn@latest add @convertfast/hero-section-editorial
 ```
 
-## 5. Recommended First Batch of Blocks
+An official shadcn directory entry is a later distribution task. Do not assume a namespace works in an unconfigured project until that entry has been accepted and verified.
 
-These blocks have simple dependencies and are ideal for first rollout:
+## Validation
 
-1. `hero-section` (deps: `button`)
-2. `logo-cloud` (deps: `card`)
-3. `feature-section` (deps: `button`)
-4. `social-proof` (deps: `card`, `avatar`)
-5. `cta` (deps: `button`)
-6. `faq` (deps: `accordion`)
-7. `pricing` (deps: `button`, `card`)
-8. `hero-section-editorial` (deps: `button`)
-9. `logo-cloud-editorial` (deps: `card`)
-10. `feature-section-editorial` (deps: `button`)
-11. `social-proof-editorial` (deps: `card`, `avatar`)
-12. `cta-editorial` (deps: `button`)
-13. `faq-editorial` (deps: `accordion`)
-14. `pricing-editorial` (deps: `button`, `card`)
+```bash
+yarn registry:build
+yarn registry:validate
+yarn workspace @convertfast/registry test
+```
 
-Dependency source files:
+Validation checks that every manifest item has the expected dependency declarations, inline source, file types, and asset targets. It also detects stale source copies and unexpected item JSONs. Tests deliberately corrupt those outputs to verify the checks fail. Real shadcn installation and a production Next.js build remain required for release.
 
-- `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/segments/src/segments`
-- `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/segments/src/editorial/segments`
-
-## 6. Migration Phases
-
-### Phase 1: Registry MVP
-
-1. Create `packages/registry` and adopt a single `blocks.json`.
-2. Publish only the first 14 items.
-3. Each item must declare:
-   - block title and description
-   - file paths (path-only, no inline content)
-   - `registryDependencies` (shadcn dependencies)
-   - `dependencies` (npm dependencies, if needed)
-4. Add schema validation in CI.
-
-Acceptance criteria:
-
-1. `registry.json` and each item JSON are publicly accessible.
-2. `npx shadcn@latest add @convertfast/hero-section` works in a clean project.
-
-### Phase 2: CLI Becomes Registry-Driven
-
-1. Add command:
-   - `convertfast add <block> --template <variant>`
-2. Refactor old logic:
-   - `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/cli/src/utils/install-deps.ts` moves from hardcoded dependency install to registry install calls.
-3. Change `page create` from section file copy to block preset install + page skeleton generation.
-
-Acceptance criteria:
-
-1. CLI no longer maintains hardcoded section dependency lists.
-2. CLI output is consistent with direct `shadcn add`.
-
-### Phase 3: Community Directory Integration
-
-1. Submit PR to shadcn UI registry index directory.
-2. After review, ConvertFast appears in the official list.
-
-Acceptance criteria:
-
-1. New users can install by namespace without manual registry setup.
-
-### Phase 4: Legacy Flow Sunset
-
-1. Remove “copy section + hardcoded dependency install” flow.
-2. Update README and CLI help docs.
-
-Acceptance criteria:
-
-1. `page/add` internally uses registry-only flow.
-2. Docs use `shadcn add @convertfast/...` as primary path.
-
-## 7. Compatibility Items to Prioritize
-
-1. Asset dependency:
-   - `hero-section` and `cta` use `/_convertfast/gradient-bg-0.svg`.
-   - Files:
-     - `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/segments/src/segments/hero-section.tsx`
-     - `/Users/observedobserver/Documents/GitHub/convertfast-ui/packages/segments/src/segments/cta.tsx`
-   - Recommendation: replace with pure CSS gradient or include assets in block files so users do not need to run `init` first.
-2. Path conventions:
-   - Sections use `@/components/ui/*` and `@/lib/utils`; keep alignment with shadcn defaults.
-3. Variant strategy:
-   - Keep `editorial` as separate items instead of runtime options in one item for easier search/install.
-
-## 8. Risks and Mitigations
-
-1. Risk: schema changes break validation.
-   - Mitigation: enforce schema checks in CI and sync regularly with shadcn docs.
-2. Risk: behavior changes for legacy CLI users.
-   - Mitigation: keep compatible commands first, then deprecate with warnings.
-3. Risk: block content and dependency mismatch.
-   - Mitigation: generate dependency lists from source imports instead of manual mapping.
-
-## 9. Milestones
-
-1. M1 (1 week): Registry MVP + 3 smoke test blocks (hero/feature/pricing).
-2. M2 (1 week): Expand to all 14 blocks + registry-driven CLI `add`.
-3. M3 (0.5 week): Docs switch + shadcn directory PR.
-4. M4 (0.5 week): Cleanup and legacy path sunset.
-
-## 10. Recommended Execution Order
-
-Minimal closed-loop path:
-
-1. Build `packages/registry` + `blocks.json`.
-2. Migrate and validate `hero-section` + `hero-section-editorial` first.
-3. Batch migrate remaining blocks after validation passes.
-
-This order minimizes rework and validates real shadcn ecosystem installation early.
+References: [registry item schema](https://ui.shadcn.com/docs/registry/registry-item-json), [registry build definition](https://ui.shadcn.com/docs/registry/registry-json), [registry examples](https://ui.shadcn.com/docs/registry/examples).

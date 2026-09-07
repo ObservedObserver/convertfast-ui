@@ -13,12 +13,16 @@
     "build": "yarn workspace convertfast-ui build",
     "registry:build": "yarn workspace @convertfast/registry build",
     "registry:validate": "yarn workspace @convertfast/registry validate",
-    "copy-templates": "cp -r packages/segments/src packages/cli/templates",
-    "copy-assets": "cp -r packages/segments/public packages/cli/assets",
-    "postbuild": "yarn copy-templates && yarn copy-assets"
+    "test": "node --test tests/cli.test.mjs",
+    "test:release": "node scripts/test-release.mjs",
+    "typecheck": "yarn workspace convertfast-ui typecheck"
   },
   "prettier": {
     "tabWidth": 2,
     "printWidth": 120
-  }
+  },
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "packageManager": "yarn@1.22.19"
 }

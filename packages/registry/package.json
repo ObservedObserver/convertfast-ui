@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node ./scripts/build-registry.mjs",
-    "validate": "node ./scripts/validate-registry.mjs"
+    "validate": "node ./scripts/validate-registry.mjs",
+    "test": "node --test ./tests/*.test.mjs"
   }
 }
