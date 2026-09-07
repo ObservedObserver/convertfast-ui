@@ -1,6 +1,6 @@
 # ConvertFast registry distribution
 
-ConvertFast ships 14 shadcn-compatible block payloads with its npm package. Bundling the payloads lets the CLI install a block before a hosted registry or namespace is available.
+ConvertFast ships 15 shadcn-compatible registry payloads with its npm package. Bundling the payloads lets the CLI install a block before a hosted registry or namespace is available.
 
 ## Files and installation
 

@@ -46,9 +46,16 @@ For a custom page, place `{/* convertfast:sections */}` where new sections shoul
 ```sh
 npx convertfast-ui@latest block add hero-section
 npx convertfast-ui@latest block add faq --template editorial
+npx convertfast-ui@latest block add color-picker
 ```
 
-Blocks use the registry JSON bundled in the npm package. No ConvertFast registry server or namespace setup is required. ConvertFast uses the tested shadcn CLI 4.21.0, which still downloads its dependencies. Blocks go into your configured components directory; import the installed component into a page. Bundled blocks require `--force` to replace; existing public assets and shared UI components are preserved.
+Blocks and standalone components use the registry JSON bundled in the npm package. No ConvertFast registry server or namespace setup is required. ConvertFast uses the tested shadcn CLI 4.21.0, which still downloads its dependencies. Registry items go into your configured components directory; import the installed component into a page. Bundled items require `--force` to replace; existing public assets and shared UI components are preserved.
+
+You can also install the color picker directly with shadcn:
+
+```sh
+npx shadcn@latest add https://convertfa.st/r/color-picker.json
+```
 
 To use a separately configured registry, pass `--namespace @your-registry`. With remote registries, `--force` follows shadcn overwrite behavior, including the registry's dependencies and assets. Page generation supports explicit `--registry auto` or `--registry only`; the default `off` uses bundled template source and installs only its missing UI dependencies.
 

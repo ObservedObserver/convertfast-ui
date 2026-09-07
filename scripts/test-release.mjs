@@ -100,7 +100,7 @@ try {
     if (config.freshUI) {
       // Standalone blocks must also work before ConvertFast initialization,
       // including installing their bundled public assets and missing UI dependencies.
-      for (const [block, template] of [['hero-section', 'default'], ['faq', 'editorial']]) {
+      for (const [block, template] of [['hero-section', 'default'], ['faq', 'editorial'], ['color-picker', 'default']]) {
         await run(process.execPath, [cli, 'block', 'add', block, '--template', template], directory, `${config.id}-block-${block}`);
       }
       await fs.access(path.join(directory, 'public/_convertfast/gradient-bg-0.svg'));

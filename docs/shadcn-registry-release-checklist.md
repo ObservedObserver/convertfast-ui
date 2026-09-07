@@ -3,9 +3,9 @@
 ## Build the npm candidate
 
 - Run `yarn registry:build`, `yarn registry:validate`, and `yarn workspace @convertfast/registry test`.
-- Confirm all 14 item JSONs exist in `packages/registry/generated` and every file entry contains inline `content`.
+- Confirm all 15 item JSONs exist in `packages/registry/generated` and every file entry contains inline `content`.
 - Build and pack the CLI using the repository's release scripts. Inspect the tarball, not only the workspace.
-- Confirm the packed `registry/` directory includes the index, 14 payloads, and the referenced component and SVG files.
+- Confirm the packed `registry/` directory includes the index, 15 payloads, and the referenced component and SVG files.
 - Confirm the tarball contains no local analytical documents, credentials, development dependencies, or unrelated project files.
 
 The registry validator checks the output against current sources and metadata. It does not replace installation tests with the actual shadcn CLI.

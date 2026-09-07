@@ -27,7 +27,7 @@ async function fixture(t, config = matrix[0]) {
 }
 
 test('CLI reports the candidate version and rejects unknown commands', () => {
-  assert.match(run(root, ['--version']), /0\.2\.0/);
+  assert.match(run(root, ['--version']), /0\.3\.0/);
   run(root, ['does-not-exist'], false);
 });
 

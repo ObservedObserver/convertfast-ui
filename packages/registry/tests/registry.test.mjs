@@ -21,9 +21,9 @@ async function editJson(outputDir, filename, mutate) {
   await fs.writeFile(file, JSON.stringify(payload));
 }
 
-test("all 14 blocks are installable payloads, with assets inlined", async (t) => {
+test("all 15 items are installable payloads, with assets inlined", async (t) => {
   const outputDir = await fixture(t);
-  assert.equal((await validateRegistry({ outputDir })).count, 14);
+  assert.equal((await validateRegistry({ outputDir })).count, 15);
   const hero = JSON.parse(await fs.readFile(path.join(outputDir, "hero-section.json"), "utf8"));
   assert.equal(hero.files[0].type, "registry:component");
   assert.match(hero.files[0].content, /export const HeroSection/);
@@ -32,6 +32,10 @@ test("all 14 blocks are installable payloads, with assets inlined", async (t) =>
   assert.match(asset.content, /<svg/);
   const editorial = JSON.parse(await fs.readFile(path.join(outputDir, "hero-section-editorial.json"), "utf8"));
   assert.equal(editorial.files[0].path, "components/hero-section-editorial.tsx");
+  const colorPicker = JSON.parse(await fs.readFile(path.join(outputDir, "color-picker.json"), "utf8"));
+  assert.deepEqual(colorPicker.registryDependencies, ["button", "popover"]);
+  assert.deepEqual(colorPicker.dependencies, ["react-colorful"]);
+  assert.match(colorPicker.files[0].content, /export function ColorPicker/);
 });
 
 test("validation rejects the previous path-only installation payload", async (t) => {

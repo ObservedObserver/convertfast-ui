@@ -99,6 +99,15 @@
       "variant": "editorial",
       "sourceFile": "packages/segments/src/editorial/segments/pricing.tsx",
       "registryDependencies": ["button", "card"]
+    },
+    {
+      "name": "color-picker",
+      "title": "Color Picker",
+      "variant": "default",
+      "description": "An accessible shadcn-style color picker with hex input, alpha support, and presets.",
+      "sourceFile": "packages/segments/src/components/color-picker.tsx",
+      "registryDependencies": ["button", "popover"],
+      "dependencies": ["react-colorful"]
     }
   ]
 }

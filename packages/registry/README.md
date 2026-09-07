@@ -1,6 +1,6 @@
 # ConvertFast registry
 
-The manifest in `manifest/blocks.json` describes 14 landing-page blocks: seven sections in both `default` and `editorial` variants. Sources live in `packages/segments/src`.
+The manifest in `manifest/blocks.json` describes 15 registry items: seven landing-page sections in both `default` and `editorial` variants, plus the standalone color picker. Sources live in `packages/segments/src`.
 
 Run these commands from the repository root:
 

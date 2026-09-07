@@ -8,6 +8,7 @@ import { pathExists, readJson, safeProjectPath, resolveAliasesPath } from "./get
 import { runShadcnAdd } from "./install-deps.ts";
 
 export const REGISTRY_MODES = ["auto", "only", "off"] as const;
+export const STANDALONE_COMPONENTS = ["color-picker"] as const;
 export type RegistryMode = (typeof REGISTRY_MODES)[number];
 type InstallRegistryBlockOptions = { blockName: string; templateName: string; namespace?: string; mode: RegistryMode; force?: boolean; verbose?: boolean; cwd?: string };
 
@@ -17,8 +18,14 @@ export function resolveRegistryMode(mode: string): RegistryMode {
 }
 
 export function resolveRegistryItemName(blockName: string, templateName: string): string {
-  if (!DEFAULT_SEGMENTS.some(segment => segment.file === blockName)) throw new Error(`Unknown block '${blockName}'. Available: ${DEFAULT_SEGMENTS.map(segment => segment.file).join(", ")}.`);
+  const isSegment = DEFAULT_SEGMENTS.some(segment => segment.file === blockName);
+  const isStandaloneComponent = STANDALONE_COMPONENTS.includes(blockName as (typeof STANDALONE_COMPONENTS)[number]);
+  if (!isSegment && !isStandaloneComponent) {
+    const available = [...DEFAULT_SEGMENTS.map(segment => segment.file), ...STANDALONE_COMPONENTS];
+    throw new Error(`Unknown block '${blockName}'. Available: ${available.join(", ")}.`);
+  }
   if (!TEMPLATE_NAMES.includes(templateName as (typeof TEMPLATE_NAMES)[number])) throw new Error(`Invalid template '${templateName}'. Available: ${TEMPLATE_NAMES.join(", ")}.`);
+  if (isStandaloneComponent) return blockName;
   return templateName === DEFAULT_TEMPLATE_NAME ? blockName : `${blockName}-${templateName}`;
 }
 
